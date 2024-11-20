@@ -1,0 +1,159 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    color: #333;
+}
+
+/* Header */
+header {
+    background: #333;
+    color: #fff;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+header .logo a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+header .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+header .nav-links li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+header .nav-links li a:hover {
+    text-decoration: underline;
+}
+
+/* Main Section */
+main {
+    padding: 2rem;
+    text-align: center;
+}
+
+.welcome-section {
+    padding: 2rem;
+    background: #f4f4f4;
+}
+
+.welcome-section h1 {
+    font-size: 2.5rem;
+}
+
+.welcome-section p {
+    margin: 1rem 0;
+}
+
+.welcome-section .btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.welcome-section .btn:hover {
+    background: #555;
+}
+
+/* Features */
+.features {
+    margin-top: 2rem;
+}
+
+.features .feature {
+    margin: 1rem 0;
+}
+
+.features h3 {
+    font-size: 1.5rem;
+}
+
+form {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background: #f9f9f9;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+}
+
+input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    background: #333;
+    color: #fff;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #555;
+}
+
+.dashboard {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 1rem;
+    background: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.dashboard h1 {
+    text-align: center;
+}
+
+.dashboard ul {
+    list-style: none;
+    padding: 0;
+}
+
+.dashboard ul li {
+    margin: 0.5rem 0;
+}
+
+.btn {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #333;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 3px;
+    margin-right: 1rem;
+}
+
+.btn:hover {
+    background: #555;
+}
