@@ -37,8 +37,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
         $query = "
             UPDATE Connections
             SET Status = 'Confirmed'
-            WHERE ConnectionID = ?
-            AND MemberID2 = ?
+            WHERE ConnectionID = ? 
+            AND MemberID2 = ? 
             AND Status = 'Requested'
         ";
         if ($stmt = $conn->prepare($query)) {
@@ -55,19 +55,57 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
     } elseif (isset($_POST['change_connection'])) {
         // Change the connection relation
         $new_relation = $_POST['new_relation'];
+        
+        // Fetch the current relation and member IDs
         $query = "
-            UPDATE Connections
-            SET Relation = ?, Status = 'Requested'
-            WHERE ConnectionID = ? AND (MemberID1 = ? OR MemberID2 = ?)
+            SELECT MemberID1, MemberID2, Relation 
+            FROM Connections 
+            WHERE ConnectionID = ?
         ";
         if ($stmt = $conn->prepare($query)) {
-            $stmt->bind_param("siii", $new_relation, $connection_id, $user_id, $user_id);
-            if ($stmt->execute()) {
-                echo "success";
-            } else {
-                echo "error";
-            }
+            $stmt->bind_param("i", $connection_id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $row = $result->fetch_assoc();
+            $current_relation = $row['Relation'];
+            $member_id1 = $row['MemberID1'];
+            $member_id2 = $row['MemberID2'];
             $stmt->close();
+            
+            // If the relation has changed, delete the old connection and create a new one
+            if ($current_relation !== $new_relation) {
+                // Delete the existing connection
+                $query = "
+                    DELETE FROM Connections 
+                    WHERE ConnectionID = ?
+                ";
+                if ($stmt = $conn->prepare($query)) {
+                    $stmt->bind_param("i", $connection_id);
+                    $stmt->execute();
+                    $stmt->close();
+                }
+
+                // Create a new connection record
+                $query = "
+                    INSERT INTO Connections (MemberID1, MemberID2, Relation, Status)
+                    VALUES (?, ?, ?, 'Requested')
+                ";
+                if ($stmt = $conn->prepare($query)) {
+                    // Assign MemberID1 as the user and MemberID2 as the other person
+                    $member_id2 = ($user_id == $member_id1) ? $member_id2 : $member_id1;
+                    $stmt->bind_param("iis", $user_id, $member_id2, $new_relation);
+                    if ($stmt->execute()) {
+                        echo "success";
+                    } else {
+                        echo "error";
+                    }
+                    $stmt->close();
+                } else {
+                    echo "error";
+                }
+            } else {
+                echo "No change in relation.";
+            }
         } else {
             echo "error";
         }
@@ -222,6 +260,7 @@ function changeConnection(connectionID, currentRelation) {
 </script>
 
 <?php
+// Helper function to display connections
 // Function to display connection cards
 function displayConnections($connections, $type) {
     if (empty($connections)) {
@@ -236,16 +275,20 @@ function displayConnections($connections, $type) {
                     <strong>' . htmlspecialchars($connection['FirstName']) . ' ' . htmlspecialchars($connection['LastName']) . '</strong><br>
                     <span style="color: grey;">' . htmlspecialchars($connection['Username']) . '</span>
                 </div>
-                 <div class="connection-action">';
+                <div class="connection-action">';
+
         if ($type === 'Requested') {
             echo '<button class="cancel-connection-btn" onclick="cancelConnection(' . $connection['ConnectionID'] . ')">Cancel</button>';
             if ($connection['MemberID2'] == $_SESSION['user_id']) {
                 echo '<button class="accept-connection-btn" style="background-color: green;" onclick="acceptConnection(' . $connection['ConnectionID'] . ')">Accept</button>';
             }
-        } else {
-            echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ')">Change</button>';
+        } elseif ($type === 'Friends' || $type === 'Family' || $type === 'Colleagues') {
+            // Here we assume the other status is 'Confirmed', and 'Change' button is available
+            echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ', \'' . htmlspecialchars($connection['Relation']) . '\')">Change</button>';
         }
+
         echo '</div></div>';
     }
 }
+
 ?>
