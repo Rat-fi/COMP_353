@@ -235,27 +235,58 @@ function acceptConnection(connectionID) {
 }
 
 function changeConnection(connectionID, currentRelation) {
-    const newRelation = prompt(
-        "Change to:\n1. Friend\n2. Family\n3. Colleague",
-        currentRelation
-    );
+    // Create and append the modal with a dropdown for selecting the new relation
+    let modalContent = `
+        <div id="changeModal" class="modal">
+            <div class="modal-content">
+                <h3>Select a new relation type:</h3>
+                <select id="relationDropdown">
+                    <option value="Friend" ${currentRelation === 'Friend' ? 'selected' : ''}>Friend</option>
+                    <option value="Family" ${currentRelation === 'Family' ? 'selected' : ''}>Family</option>
+                    <option value="Colleague" ${currentRelation === 'Colleague' ? 'selected' : ''}>Colleague</option>
+                </select>
+                <div class="modal-buttons">
+                    <button onclick="confirmChange(${connectionID}, '${currentRelation}')">OK</button>
+                    <button class="cancel" onclick="cancelChange()">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalContent);
 
-    if (newRelation !== currentRelation) {
-        var xhr = new XMLHttpRequest();
-        xhr.open("POST", "connections.php", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState == 4 && xhr.status == 200) {
-                if (xhr.responseText === "success") {
-                    alert("Connection changed successfully!");
-                    location.reload();
-                } else {
-                    alert("Error: Unable to change the connection.");
+    // Show the modal (overlay + content)
+    document.getElementById('changeModal').style.display = 'block';
+
+    // Function to handle the confirmation of the change
+    window.confirmChange = function (connectionID, currentRelation) {
+        let newRelation = document.getElementById('relationDropdown').value;
+
+        // Close the modal
+        document.getElementById('changeModal').style.display = 'none';
+
+        // If the relation is different, send an AJAX request
+        if (newRelation !== currentRelation) {
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "connections.php", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    if (xhr.responseText === "success") {
+                        alert("Connection changed successfully!");
+                        location.reload();
+                    } else {
+                        alert("Error: Unable to change the connection.");
+                    }
                 }
-            }
-        };
-        xhr.send("change_connection=true&connection_id=" + connectionID + "&new_relation=" + newRelation);
-    }
+            };
+            xhr.send("change_connection=true&connection_id=" + connectionID + "&new_relation=" + newRelation);
+        }
+    };
+
+    // Function to handle the cancel action (closes the modal)
+    window.cancelChange = function () {
+        document.getElementById('changeModal').style.display = 'none';
+    };
 }
 </script>
 
