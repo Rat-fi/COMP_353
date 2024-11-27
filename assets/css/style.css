@@ -255,7 +255,7 @@ button:hover {
   text-transform: none;
 }
 
-/* Connections Page */
+/* -----------------------------------Connections Page------------------------------------- */
 /* Tabs Styles */
 .tabs {
   display: flex;
@@ -330,6 +330,21 @@ button:hover {
   background-color: #0056b3;
 }
 
+/* Cancel Button */
+.cancel-connection-btn {
+  padding: 0.5rem 1rem;
+  background-color: #e74c3c; /* Red */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.cancel-connection-btn:hover {
+  background-color: #c0392b; /* Darker red */
+}
+
 /* Responsive Design */
 @media (max-width: 600px) {
   .grid-form {
@@ -348,14 +363,32 @@ button:hover {
     margin-right: 0;
     margin-bottom: 10px;
   }
+
+  /* Adjust Connection Card Layout on Small Screens */
+  .connection-card {
+    flex-direction: column;
+    padding: 1rem;
+    margin-bottom: 15px;
+  }
+
+  .connection-info {
+    text-align: center;
+  }
+
+  .connection-action {
+    text-align: center;
+    margin-top: 10px;
+  }
 }
 
+/* Back Button Container */
 .back-button-container {
   display: flex;
   flex-direction: row;
   margin-bottom: 1rem;
 }
 
+/* Link Button */
 .link-button {
   padding: 0.75rem;
   background: #212e54;
