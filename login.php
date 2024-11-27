@@ -2,6 +2,12 @@
 session_start(); // Start session before output
 include('config.php');
 
+
+if (isset($_SESSION['user_id'])) {
+    header("Location: dashboard.php");
+    exit();
+}
+
 $error_message = ""; // Initialize error message
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {

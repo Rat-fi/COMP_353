@@ -4,44 +4,62 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
+    background: #f9f9f9;
 }
 
 /* Header */
-header {
-    background: #333;
-    color: #fff;
-    padding: 1rem 2rem;
+/* Navbar Styles */
+.navbar {
     display: flex;
+    /* Use flexbox */
     justify-content: space-between;
+    /* Space between logo and navigation */
     align-items: center;
+    /* Vertically align items */
+    padding: 1rem 2rem;
+    background: #212e54;
+    color: #fff;
 }
 
-header .logo a {
-    color: #fff;
+/* Logo */
+.logo a {
     text-decoration: none;
+    color: #fff;
     font-size: 1.5rem;
     font-weight: bold;
 }
 
-header .nav-links {
+/* Navigation Links */
+.nav-links {
     list-style: none;
     display: flex;
+    /* Arrange links horizontally */
     gap: 1rem;
+    /* Add space between links */
+    margin: 0;
+    padding: 0;
 }
 
-header .nav-links li a {
-    color: #fff;
+.nav-links li {
+    display: inline-block;
+}
+
+.nav-links a {
     text-decoration: none;
+    color: #fff;
+    font-weight: bold;
+    transition: color 0.3s ease;
 }
 
-header .nav-links li a:hover {
-    text-decoration: underline;
+.nav-links a:hover {
+    color: #ccc;
 }
 
 /* Main Section */
 main {
     padding: 2rem;
     text-align: center;
+    min-height: 76vh;
 }
 
 .welcome-section {
@@ -83,77 +101,156 @@ main {
     font-size: 1.5rem;
 }
 
+/* Form Styles */
 form {
-    max-width: 400px;
+    max-width: 600px;
     margin: 2rem auto;
-    padding: 1.5rem;
+    padding: 2rem;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    background: #f9f9f9;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.form-group {
-    margin-bottom: 1rem;
+.grid-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    /* Two equal columns */
+    gap: 1rem;
+    /* Spacing between rows and columns */
+}
+
+.grid-form .form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-form textarea {
+    grid-column: span 2;
+    /* Make the textarea span both columns */
+}
+
+.full-width {
+    grid-column: span 2;
+    /* Make the button span both columns */
 }
 
 label {
-    display: block;
     margin-bottom: 0.5rem;
     font-weight: bold;
+    color: #333;
 }
 
-input {
+input,
+textarea {
+    display: block;
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.75rem;
+    margin: 0;
     border: 1px solid #ddd;
-    border-radius: 3px;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: #f9f9f9;
+    box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus {
+    border-color: #212e54;
+    outline: none;
+    background: #fff;
+}
+
+textarea {
+    height: 120px;
+    resize: none;
+    /* Prevent resizing */
 }
 
 button {
-    padding: 0.5rem 1rem;
-    background: #333;
+    padding: 0.75rem;
+    background: #212e54;
     color: #fff;
     border: none;
-    border-radius: 3px;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.3s ease;
 }
 
 button:hover {
-    background: #555;
+    background: #1b2445;
 }
 
-.dashboard {
-    max-width: 800px;
+/* Edit Profile */
+.edit-profile {
+    max-width: 1200px;
     margin: 2rem auto;
-    padding: 1rem;
-    background: #f9f9f9;
+    padding: 1.5rem;
+    background: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
 }
 
-.dashboard h1 {
+.edit-profile h1,
+.edit-profile h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.read-only-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.info-item {
+    padding: 0.5rem;
+    background: #f4f4f4;
+    border: 1px solid #ddd;
+    border-radius: 5px;
     text-align: center;
 }
 
-.dashboard ul {
-    list-style: none;
-    padding: 0;
+.info-item strong {
+    display: block;
+    margin-bottom: 0.5rem;
 }
 
-.dashboard ul li {
-    margin: 0.5rem 0;
+/* Responsive Design */
+@media (max-width: 600px) {
+    .grid-form {
+        grid-template-columns: 1fr;
+        /* Single column for small screens */
+    }
+
+    .read-only-info {
+        grid-template-columns: 1fr;
+        /* Single column for small screens */
+    }
 }
 
-.btn {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background: #333;
+.back-button-container {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1rem;
+    /* Space below the button */
+}
+
+.link-button {
+    padding: 0.75rem;
+    background: #212e54;
     color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-align: center;
+    transition: background 0.3s ease;
     text-decoration: none;
-    border-radius: 3px;
-    margin-right: 1rem;
-}
-
-.btn:hover {
-    background: #555;
+    text-transform: none;
 }

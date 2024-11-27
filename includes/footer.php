@@ -1,5 +1,6 @@
-<footer>
-        <p>&copy; 2024 COSN. All rights reserved.</p>
-    </footer>
+<footer style="text-align: center">
+    <p>Sayna Azarfar, Gabriel Lemieux, Beshoi Khair, Raphael Leyo</p>
+</footer>
 </body>
+
 </html>
