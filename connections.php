@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Handle AJAX requests for canceling or accepting a connection
+// Handle AJAX requests for canceling, accepting, or changing a connection
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
     $connection_id = $_POST['connection_id'];
 
@@ -21,17 +21,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
             WHERE ConnectionID = ? 
             AND (MemberID1 = ? OR MemberID2 = ?)
         ";
-
         if ($stmt = $conn->prepare($query)) {
             $stmt->bind_param("iii", $connection_id, $user_id, $user_id);
             if ($stmt->execute()) {
-                echo "success";  // Return success message
+                echo "success";
             } else {
-                echo "error";    // Return error message
+                echo "error";
             }
             $stmt->close();
         } else {
-            echo "error";      // Return error if query preparation fails
+            echo "error";
         }
     } elseif (isset($_POST['accept_connection'])) {
         // Accept the connection
@@ -42,20 +41,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
             AND MemberID2 = ?
             AND Status = 'Requested'
         ";
-
         if ($stmt = $conn->prepare($query)) {
             $stmt->bind_param("ii", $connection_id, $user_id);
             if ($stmt->execute() && $stmt->affected_rows > 0) {
-                echo "success";  // Return success message
+                echo "success";
             } else {
-                echo "error";    // Return error message
+                echo "error";
             }
             $stmt->close();
         } else {
-            echo "error";      // Return error if query preparation fails
+            echo "error";
+        }
+    } elseif (isset($_POST['change_connection'])) {
+        // Change the connection relation
+        $new_relation = $_POST['new_relation'];
+        $query = "
+            UPDATE Connections
+            SET Relation = ?, Status = 'Requested'
+            WHERE ConnectionID = ? AND (MemberID1 = ? OR MemberID2 = ?)
+        ";
+        if ($stmt = $conn->prepare($query)) {
+            $stmt->bind_param("siii", $new_relation, $connection_id, $user_id, $user_id);
+            if ($stmt->execute()) {
+                echo "success";
+            } else {
+                echo "error";
+            }
+            $stmt->close();
+        } else {
+            echo "error";
         }
     }
-    exit(); // End the script after handling the AJAX request
+    exit();
 }
 
 // Fetch connections
@@ -179,8 +196,28 @@ function acceptConnection(connectionID) {
     xhr.send("accept_connection=true&connection_id=" + connectionID);
 }
 
-function changeConnection() {
-    // Empty function for now (Placeholder)
+function changeConnection(connectionID, currentRelation) {
+    const newRelation = prompt(
+        "Change to:\n1. Friend\n2. Family\n3. Colleague",
+        currentRelation
+    );
+
+    if (newRelation !== currentRelation) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "connections.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                if (xhr.responseText === "success") {
+                    alert("Connection changed successfully!");
+                    location.reload();
+                } else {
+                    alert("Error: Unable to change the connection.");
+                }
+            }
+        };
+        xhr.send("change_connection=true&connection_id=" + connectionID + "&new_relation=" + newRelation);
+    }
 }
 </script>
 
@@ -199,14 +236,14 @@ function displayConnections($connections, $type) {
                     <strong>' . htmlspecialchars($connection['FirstName']) . ' ' . htmlspecialchars($connection['LastName']) . '</strong><br>
                     <span style="color: grey;">' . htmlspecialchars($connection['Username']) . '</span>
                 </div>
-                <div class="connection-action">';
+                 <div class="connection-action">';
         if ($type === 'Requested') {
             echo '<button class="cancel-connection-btn" onclick="cancelConnection(' . $connection['ConnectionID'] . ')">Cancel</button>';
             if ($connection['MemberID2'] == $_SESSION['user_id']) {
                 echo '<button class="accept-connection-btn" style="background-color: green;" onclick="acceptConnection(' . $connection['ConnectionID'] . ')">Accept</button>';
             }
         } else {
-            echo '<button class="change-connection-btn" onclick="changeConnection()">Change</button>';
+            echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ')">Change</button>';
         }
         echo '</div></div>';
     }
