@@ -311,11 +311,11 @@ function displayConnections($connections, $type) {
         if ($type === 'Requested') {
             echo '<button class="cancel-connection-btn" onclick="cancelConnection(' . $connection['ConnectionID'] . ')">Cancel</button>';
             if ($connection['MemberID2'] == $_SESSION['user_id']) {
-                echo '<button class="accept-connection-btn" style="background-color: green;" onclick="acceptConnection(' . $connection['ConnectionID'] . ')">Accept</button>';
+                echo '<button class="accept-connection-btn" style="background-color: green; margin-left: 0.5rem" onclick="acceptConnection(' . $connection['ConnectionID'] . ')">Accept</button>';
             }
         } elseif ($type === 'Friends' || $type === 'Family' || $type === 'Colleagues') {
             // Here we assume the other status is 'Confirmed', and 'Change' button is available
-            echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ', \'' . htmlspecialchars($connection['Relation']) . '\')">Change</button>';
+            echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ', \'' . htmlspecialchars($connection['Relation']) . '\')">Change Relation</button>';
         }
 
         echo '</div></div>';
