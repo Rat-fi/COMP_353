@@ -51,7 +51,7 @@ $result = $conn->query($query);
 
         <!-- Search form -->
         <form method="GET" action="add_Connection.php" style="margin-bottom: 20px;">
-            <input type="text" name="search" placeholder="Search members..." value="<?php echo htmlspecialchars($search_query); ?>">
+            <input type="text" name="search" placeholder="Search members by name or username..." value="<?php echo htmlspecialchars($search_query); ?>">
             <button type="submit">Search</button>
         </form>
 
@@ -60,13 +60,13 @@ $result = $conn->query($query);
             <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <?php while ($row = $result->fetch_assoc()): ?>
                     <div style="display: flex; justify-content: space-between; padding: 10px; border: 1px solid #ddd; border-radius: 5px; background: #f4f4f4;">
-                        <div>
+                        <div style="text-align:left">
                             <h2 style="margin: 0; font-size: 1.2em; font-weight: bold; color: black;"><?php echo htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']); ?></h2>
                             <p style="margin: 0; color: gray;"><?php echo htmlspecialchars($row['Username']); ?></p>
                         </div>
-                        <form method="POST" action="add_Connection.php">
+                        <form method="POST" action="add_Connection.php" style="margin:0px; padding:0px">
                             <input type="hidden" name="connect_member_id" value="<?php echo $row['MemberID']; ?>">
-                            <button type="submit" style="padding: 10px 20px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                            <button type="submit" style="margin:0px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
                                 Connect
                             </button>
                         </form>
