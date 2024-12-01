@@ -260,7 +260,7 @@ button:hover {
 .tabs {
   display: flex;
   margin-bottom: 20px;
-  justify-content: center;
+  justify-content: space-between;
 }
 
 .tab-button {

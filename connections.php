@@ -151,9 +151,11 @@ include('includes/header.php');
         <h1>Your Connections</h1>
 
         <div class="tabs">
-            <button class="tab-button active" onclick="showTab('friends')">Friends</button>
-            <button class="tab-button" onclick="showTab('family')">Family</button>
-            <button class="tab-button" onclick="showTab('colleagues')">Colleagues</button>
+            <div>
+                <button class="tab-button active" onclick="showTab('friends')">Friends</button>
+                <button class="tab-button" onclick="showTab('family')">Family</button>
+                <button class="tab-button" onclick="showTab('colleagues')">Colleagues</button>
+            </div>
             <button class="add-connection-btn" onclick="window.location.href='add_connection.php'">Add Connection</button>
         </div>
 
