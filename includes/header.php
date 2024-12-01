@@ -31,6 +31,9 @@ if (session_status() === PHP_SESSION_NONE) {
                     <li><a href="dashboard.php">
                             <p>Home</p>
                         </a></li>
+                    <li><a href="connections.php">
+                            <p>My Connections</p>
+                        </a></li>
                     <li><a href="logout.php">
                             <p>Logout</p>
                         </a></li>
