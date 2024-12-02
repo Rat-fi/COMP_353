@@ -448,13 +448,13 @@ button.cancel:hover {
 .sent {
   background-color: #d1f7c4;
   text-align: left;
-  margin-left: 20px;
+  margin-right: 40px;
 }
 
 .received {
   background-color: #f1f1f1;
   text-align: right;
-  margin-right: 20px;
+  margin-left: 40px;
 }
 
 .timestamp {
@@ -465,17 +465,21 @@ button.cancel:hover {
 /* Message form */
 .message-form {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  gap: 1rem;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .message-form textarea {
   padding: 10px;
-  margin-bottom: 10px;
   font-size: 1rem;
+  height: 75px;
 }
 
 .message-form button {
-  padding: 10px;
+  margin: 0;
+  padding: 20px;
   background-color: #4caf50;
   color: white;
   border: none;
