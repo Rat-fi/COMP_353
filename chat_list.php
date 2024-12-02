@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Fetch connections of the logged-in user (either as MemberID1 or MemberID2)
+// Fetch connections of the logged-in user (excluding the logged-in user from being shown as a connection)
 $query = "
     SELECT 
         c.ConnectionID, 
@@ -25,6 +25,7 @@ $query = "
                           OR (msg.SenderID = c.MemberID2 AND msg.ReceiverID = c.MemberID1)
     WHERE (c.MemberID1 = $user_id OR c.MemberID2 = $user_id)
       AND c.Status = 'Confirmed' 
+      AND (m.MemberID != $user_id)  -- Exclude the logged-in user
     GROUP BY c.ConnectionID, m.MemberID, m.FirstName, m.LastName, m.Username
     ORDER BY LastMessageTime DESC
 ";
