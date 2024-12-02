@@ -35,10 +35,10 @@ $result = $conn->query($query);
 <?php include('includes/header.php'); ?>
 
 <main>
-    <h1>Connections</h1>
+    <h1>Chat</h1>
     <section class="connections-list">
         <?php while ($connection = $result->fetch_assoc()): ?>
-            <div class="connection-item">
+            <div class="connection-card">
                 <a href="chat.php?member_id=<?php echo $connection['MemberID']; ?>">
                     <p><?php echo htmlspecialchars($connection['FirstName'] . ' ' . $connection['LastName']); ?></p>
                     <p>Last message: 
