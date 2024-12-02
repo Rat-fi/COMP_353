@@ -13,24 +13,29 @@ $user_id = $_SESSION['user_id'];
 // Get the member_id from the query string
 $other_member_id = isset($_GET['member_id']) ? (int)$_GET['member_id'] : 0;
 
+// Fetch the name of the other member
+$query = "SELECT FirstName, LastName FROM Members WHERE MemberID = $other_member_id";
+$result = $conn->query($query);
+$other_member = $result->fetch_assoc();
+
 // Fetch messages between the logged-in user and the selected member
-$query = "
+$query_messages = "
     SELECT * FROM Messages 
     WHERE (SenderID = $user_id AND ReceiverID = $other_member_id) 
        OR (SenderID = $other_member_id AND ReceiverID = $user_id)
     ORDER BY Timestamp ASC
 ";
-$result = $conn->query($query);
+$result_messages = $conn->query($query_messages);
 ?>
 
 <?php include('includes/header.php'); ?>
 
 <main>
-    <h1>Chat with <?php echo htmlspecialchars($other_member_id); ?></h1>
+    <h1>Chat with <?php echo htmlspecialchars($other_member['FirstName'] . ' ' . $other_member['LastName']); ?></h1>
 
     <section class="chat-container">
         <div class="messages">
-            <?php while ($message = $result->fetch_assoc()): ?>
+            <?php while ($message = $result_messages->fetch_assoc()): ?>
                 <div class="message <?php echo ($message['SenderID'] == $user_id) ? 'sent' : 'received'; ?>">
                     <p><?php echo htmlspecialchars($message['Content']); ?></p>
                     <span class="timestamp"><?php echo date("F j, Y, g:i a", strtotime($message['Timestamp'])); ?></span>
