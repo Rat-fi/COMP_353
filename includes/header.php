@@ -34,6 +34,9 @@ if (session_status() === PHP_SESSION_NONE) {
                     <li><a href="connections.php">
                             <p>My Connections</p>
                         </a></li>
+                    <li><a href="chat_list.php">
+                        <p>Chat</p>
+                    </a></li>
                     <li><a href="logout.php">
                             <p>Logout</p>
                         </a></li>

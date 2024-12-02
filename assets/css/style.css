@@ -424,3 +424,102 @@ button.cancel {
 button.cancel:hover {
   background-color: #e53935;
 }
+
+/*-------------------------Chat CSS ----------------------------------------------*/
+/* Chat container */
+.chat-container {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Messages */
+.messages {
+  margin-bottom: 20px;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  max-width: 80%;
+}
+
+.sent {
+  background-color: #d1f7c4;
+  text-align: left;
+  margin-right: 40px;
+}
+
+.received {
+  background-color: #f1f1f1;
+  text-align: right;
+  margin-left: 40px;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* Message form */
+.message-form {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.message-form textarea {
+  padding: 10px;
+  font-size: 1rem;
+  height: 75px;
+}
+
+.message-form button {
+  margin: 0;
+  padding: 20px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.message-form button:hover {
+  background-color: #45a049;
+}
+.chat-card {
+  display: flex;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  background-color: white;
+  transition: background-color 0.3s ease;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.chat-card:hover {
+  background-color: #f0f0f0; /* grey background on hover */
+}
+
+.chat-card p {
+  margin: 0;
+  padding: 0;
+}
+.chat-card.unread {
+  font-weight: bold;
+  background-color: #f1f1f1;
+}
+.chat-card.unread:hover {
+  font-weight: bold;
+  background-color: #dad9d9;
+}
+.unread-badge {
+  color: red;
+  font-size: 12px;
+  font-weight: bold;
+}
