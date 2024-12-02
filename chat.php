@@ -18,6 +18,16 @@ $query = "SELECT FirstName, LastName FROM Members WHERE MemberID = $other_member
 $result = $conn->query($query);
 $other_member = $result->fetch_assoc();
 
+// Mark unread messages from this member as read
+$query_update_read_status = "
+    UPDATE Messages
+    SET ReadStatus = 'Read'
+    WHERE ReceiverID = $user_id 
+      AND SenderID = $other_member_id 
+      AND ReadStatus = 'Unread'
+";
+$conn->query($query_update_read_status);
+
 // Handle message sending
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['content'])) {
     $content = mysqli_real_escape_string($conn, $_POST['content']);

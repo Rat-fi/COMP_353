@@ -510,3 +510,16 @@ button.cancel:hover {
   margin: 0;
   padding: 0;
 }
+.chat-card.unread {
+  font-weight: bold;
+  background-color: #f1f1f1;
+}
+.chat-card.unread:hover {
+  font-weight: bold;
+  background-color: #dad9d9;
+}
+.unread-badge {
+  color: red;
+  font-size: 12px;
+  font-weight: bold;
+}
