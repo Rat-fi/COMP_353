@@ -424,3 +424,64 @@ button.cancel {
 button.cancel:hover {
   background-color: #e53935;
 }
+
+/*-------------------------Chat CSS ----------------------------------------------*/
+/* Chat container */
+.chat-container {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Messages */
+.messages {
+  margin-bottom: 20px;
+}
+
+.message {
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  max-width: 80%;
+}
+
+.sent {
+  background-color: #d1f7c4;
+  text-align: left;
+  margin-left: 20px;
+}
+
+.received {
+  background-color: #f1f1f1;
+  text-align: right;
+  margin-right: 20px;
+}
+
+.timestamp {
+  font-size: 0.8rem;
+  color: #777;
+}
+
+/* Message form */
+.message-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.message-form textarea {
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+
+.message-form button {
+  padding: 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.message-form button:hover {
+  background-color: #45a049;
+}
