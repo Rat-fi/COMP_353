@@ -41,7 +41,15 @@ $result = $conn->query($query);
             <div class="connection-item">
                 <a href="chat.php?member_id=<?php echo $connection['MemberID']; ?>">
                     <p><?php echo htmlspecialchars($connection['FirstName'] . ' ' . $connection['LastName']); ?></p>
-                    <p>Last message: <?php echo date("F j, Y, g:i a", strtotime($connection['LastMessageTime'])); ?></p>
+                    <p>Last message: 
+                        <?php 
+                        if (!empty($connection['LastMessageTime'])) {
+                            echo date("F j, Y, g:i a", strtotime($connection['LastMessageTime']));
+                        } else {
+                            echo "No messages yet";
+                        }
+                        ?>
+                    </p>                
                 </a>
             </div>
         <?php endwhile; ?>

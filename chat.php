@@ -18,6 +18,22 @@ $query = "SELECT FirstName, LastName FROM Members WHERE MemberID = $other_member
 $result = $conn->query($query);
 $other_member = $result->fetch_assoc();
 
+// Handle message sending
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['content'])) {
+    $content = mysqli_real_escape_string($conn, $_POST['content']);
+
+    // Insert the message into the database
+    $query_insert_message = "
+        INSERT INTO Messages (SenderID, ReceiverID, Content) 
+        VALUES ($user_id, $other_member_id, '$content')
+    ";
+    $conn->query($query_insert_message);
+
+    // Redirect back to the chat page to display the new message
+    header("Location: chat.php?member_id=$other_member_id");
+    exit();
+}
+
 // Fetch messages between the logged-in user and the selected member
 $query_messages = "
     SELECT * FROM Messages 
@@ -43,10 +59,9 @@ $result_messages = $conn->query($query_messages);
             <?php endwhile; ?>
         </div>
 
-        <form action="send_message.php" method="POST" class="message-form">
-            <input type="hidden" name="receiver_id" value="<?php echo $other_member_id; ?>">
+        <form action="chat.php?member_id=<?php echo $other_member_id; ?>" method="POST" class="message-form">
             <textarea name="content" placeholder="Type your message..." required></textarea>
-            <button type="submit" name="send_message">Send</button>
+            <button type="submit">Send</button>
         </form>
     </section>
 </main>
