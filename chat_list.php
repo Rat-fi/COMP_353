@@ -38,19 +38,17 @@ $result = $conn->query($query);
     <h1>Chat</h1>
     <section class="connections-list">
         <?php while ($connection = $result->fetch_assoc()): ?>
-            <div class="connection-card">
-                <a href="chat.php?member_id=<?php echo $connection['MemberID']; ?>">
-                    <p><?php echo htmlspecialchars($connection['FirstName'] . ' ' . $connection['LastName']); ?></p>
-                    <p>Last message: 
-                        <?php 
-                        if (!empty($connection['LastMessageTime'])) {
-                            echo date("F j, Y, g:i a", strtotime($connection['LastMessageTime']));
-                        } else {
-                            echo "No messages yet";
-                        }
-                        ?>
-                    </p>                
-                </a>
+            <div class="chat-card" onclick="window.location.href='chat.php?member_id=<?php echo $connection['MemberID']; ?>'">
+                <p><?php echo htmlspecialchars($connection['FirstName'] . ' ' . $connection['LastName']); ?></p>
+                <p>Last message: 
+                    <?php 
+                    if (!empty($connection['LastMessageTime'])) {
+                        echo date("F j, Y, g:i a", strtotime($connection['LastMessageTime']));
+                    } else {
+                        echo "No messages yet";
+                    }
+                    ?>
+                </p>                
             </div>
         <?php endwhile; ?>
     </section>

@@ -485,3 +485,24 @@ button.cancel:hover {
 .message-form button:hover {
   background-color: #45a049;
 }
+.chat-card {
+  display: flex;
+  cursor: pointer;
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+  background-color: white;
+  transition: background-color 0.3s ease;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-radius: 5px;
+}
+
+.chat-card:hover {
+  background-color: #f0f0f0; /* grey background on hover */
+}
+
+.chat-card p {
+  margin: 0;
+  padding: 0;
+}
