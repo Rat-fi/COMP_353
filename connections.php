@@ -10,7 +10,7 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
-// Handle AJAX requests for canceling, accepting, or changing a connection
+// Handle AJAX requests for canceling, accepting, changing, blocking, or unblocking a connection
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
     $connection_id = $_POST['connection_id'];
 
@@ -109,6 +109,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
         } else {
             echo "error";
         }
+    } elseif (isset($_POST['block_connection'])) {
+        // Block the connection
+        $query = "
+            UPDATE Connections
+            SET Status = 'Blocked'
+            WHERE ConnectionID = ? 
+            AND (MemberID1 = ? OR MemberID2 = ?)
+        ";
+        if ($stmt = $conn->prepare($query)) {
+            $stmt->bind_param("iii", $connection_id, $user_id, $user_id);
+            if ($stmt->execute()) {
+                echo "success";
+            } else {
+                echo "error";
+            }
+            $stmt->close();
+        } else {
+            echo "error";
+        }
+    } elseif (isset($_POST['unblock_connection'])) {
+        // Unblock the connection
+        $query = "
+            UPDATE Connections
+            SET Status = 'Requested'
+            WHERE ConnectionID = ? 
+            AND (MemberID1 = ? OR MemberID2 = ?)
+            AND Status = 'Blocked'
+        ";
+        if ($stmt = $conn->prepare($query)) {
+            $stmt->bind_param("iii", $connection_id, $user_id, $user_id);
+            if ($stmt->execute()) {
+                echo "success";
+            } else {
+                echo "error";
+            }
+            $stmt->close();
+        } else {
+            echo "error";
+        }
     }
     exit();
 }
@@ -132,9 +171,9 @@ $query = "
 
 $result = $conn->query($query);
 $connections = [
-    'Friend' => ['Requested' => [], 'Confirmed' => []], 
-    'Family' => ['Requested' => [], 'Confirmed' => []], 
-    'Colleague' => ['Requested' => [], 'Confirmed' => []]
+    'Friend' => ['Requested' => [], 'Confirmed' => [], 'Blocked' => []], 
+    'Family' => ['Requested' => [], 'Confirmed' => [], 'Blocked' => []], 
+    'Colleague' => ['Requested' => [], 'Confirmed' => [], 'Blocked' => []]
 ];
 
 if ($result->num_rows > 0) {
@@ -165,6 +204,9 @@ include('includes/header.php');
 
             <h2>Friends</h2>
             <?php displayConnections($connections['Friend']['Confirmed'], 'Friends'); ?>
+
+            <h2>Blocked</h2>
+            <?php displayConnections($connections['Friend']['Blocked'], 'Blocked'); ?>
         </div>
 
         <div id="family" class="tab-content">
@@ -173,6 +215,9 @@ include('includes/header.php');
 
             <h2>Family</h2>
             <?php displayConnections($connections['Family']['Confirmed'], 'Family'); ?>
+
+            <h2>Blocked</h2>
+            <?php displayConnections($connections['Family']['Blocked'], 'Blocked'); ?>
         </div>
 
         <div id="colleagues" class="tab-content">
@@ -181,6 +226,9 @@ include('includes/header.php');
 
             <h2>Colleagues</h2>
             <?php displayConnections($connections['Colleague']['Confirmed'], 'Colleagues'); ?>
+
+            <h2>Blocked</h2>
+            <?php displayConnections($connections['Colleague']['Blocked'], 'Blocked'); ?>
         </div>
     </section>
 </main>
@@ -235,7 +283,6 @@ function acceptConnection(connectionID) {
     };
     xhr.send("accept_connection=true&connection_id=" + connectionID);
 }
-
 function changeConnection(connectionID, currentRelation) {
     // Create and append the modal with a dropdown for selecting the new relation
     let modalContent = `
@@ -290,6 +337,44 @@ function changeConnection(connectionID, currentRelation) {
         document.getElementById('changeModal').style.display = 'none';
     };
 }
+
+function blockConnection(connectionID) {
+    if (confirm("Are you sure you want to block this connection?")) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "connections.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                if (xhr.responseText === "success") {
+                    alert("Connection blocked successfully");
+                    location.reload();
+                } else {
+                    alert("Error: Unable to block the connection.");
+                }
+            }
+        };
+        xhr.send("block_connection=true&connection_id=" + connectionID);
+    }
+}
+
+function unblockConnection(connectionID) {
+    if (confirm("Are you sure you want to unblock this connection?")) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "connections.php", true);
+        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                if (xhr.responseText === "success") {
+                    alert("Connection unblocked successfully");
+                    location.reload();
+                } else {
+                    alert("Error: Unable to unblock the connection.");
+                }
+            }
+        };
+        xhr.send("unblock_connection=true&connection_id=" + connectionID);
+    }
+}
 </script>
 
 <?php
@@ -315,8 +400,10 @@ function displayConnections($connections, $type) {
             if ($connection['MemberID2'] == $_SESSION['user_id']) {
                 echo '<button class="accept-connection-btn" style="background-color: green; margin-left: 0.5rem" onclick="acceptConnection(' . $connection['ConnectionID'] . ')">Accept</button>';
             }
+        } elseif ($type === 'Blocked') {
+            echo '<button class="unblock-connection-btn" style="background-color: orange;" onclick="unblockConnection(' . $connection['ConnectionID'] . ')">Unblock</button>';
         } elseif ($type === 'Friends' || $type === 'Family' || $type === 'Colleagues') {
-            // Here we assume the other status is 'Confirmed', and 'Change' button is available
+            echo '<button class="block-connection-btn" style="background-color: red;" onclick="blockConnection(' . $connection['ConnectionID'] . ')">Block</button>';
             echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ', \'' . htmlspecialchars($connection['Relation']) . '\')">Change Relation</button>';
         }
 
