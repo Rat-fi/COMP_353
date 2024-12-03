@@ -43,7 +43,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
 <main>
     <section class="dashboard">
-        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;"> 
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr;">
             <div></div>
             <h1 style="justify-self: center;">
                 Welcome,
@@ -59,26 +59,182 @@ $_SESSION['LAST_ACTIVITY'] = time();
         <section style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 <p>Latest Messages</p>
-                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                <div style="height: 500px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+                    <?php
+                    // Fetch the latest messages for the current user
+                    $query = "
+                        SELECT 
+                            Messages.Content, 
+                            Messages.Timestamp, 
+                            Members.Username AS SenderName,
+                            Members.MemberID AS SenderID
+                        FROM 
+                            Messages 
+                        INNER JOIN 
+                            Members ON Messages.SenderID = Members.MemberID 
+                        WHERE 
+                            Messages.ReceiverID = $user_id 
+                        ORDER BY 
+                            Messages.Timestamp DESC 
+                        LIMIT 5";
+                    $result = $conn->query($query);
 
+                    if ($result->num_rows > 0) {
+                        while ($message = $result->fetch_assoc()) {
+                            echo "<a href='http://localhost:3000/chat.php?member_id=" . htmlspecialchars($message['SenderID']) . "' 
+                                style='text-decoration: none; color: inherit; width: 100%;'>
+                                <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
+                                    <p><strong>" . htmlspecialchars($message['SenderName']) . ":</strong> " . htmlspecialchars($message['Content']) . "</p>
+                                    <p style='font-size: 0.75rem; color: #777;'>"
+                                . htmlspecialchars($message['Timestamp']) . "</p>
+                                </div>
+                            </a>";
+                        }
+                    } else {
+                        echo "<p style='font-size: 0.85rem;'>No new messages.</p>";
+                    }
+                    ?>
                 </div>
             </section>
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 <p>Latest Posts</p>
-                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+                <div style="height: 500px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+                    <?php
+                    // Fetch the latest posts visible to the user
+                    $query = "
+                        SELECT 
+                            Posts.PostID, 
+                            Posts.ContentType, 
+                            Posts.ContentText, 
+                            Posts.ContentLink, 
+                            Posts.CreationDate, 
+                            Posts.Visibility, 
+                            Members.FirstName, 
+                            Members.LastName, 
+                            UserGroups.GroupName 
+                        FROM 
+                            Posts
+                        LEFT JOIN 
+                            UserGroups ON Posts.GroupID = UserGroups.GroupID
+                        INNER JOIN 
+                            Members ON Posts.AuthorID = Members.MemberID
+                        LEFT JOIN 
+                            GroupMembers ON Posts.GroupID = GroupMembers.GroupID
+                        WHERE 
+                            Posts.Visibility = 'Public'
+                            OR (Posts.Visibility = 'Group' AND GroupMembers.MemberID = $user_id)
+                        AND 
+                            Posts.ModerationStatus = 'Approved'
+                        GROUP BY 
+                            Posts.PostID
+                        ORDER BY 
+                            Posts.CreationDate DESC 
+                        LIMIT 5";
+                    $result = $conn->query($query);
 
+                    if ($result->num_rows > 0) {
+                        while ($post = $result->fetch_assoc()) {
+                            echo "<div style='background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem; width: 99%;'>
+                                <p><strong>" . htmlspecialchars($post['FirstName']) . " " . htmlspecialchars($post['LastName']) . "</strong> 
+                                <span style='font-size: 0.75rem; color: #777;'>(" . htmlspecialchars($post['Visibility']) .
+                                        (!empty($post['GroupName']) ? " in " . htmlspecialchars($post['GroupName']) : "") . ")</span></p>
+                                <p>" . htmlspecialchars($post['ContentText']) . "</p>";
+
+                                // Display content link for images/videos
+                                if (!empty($post['ContentLink']) && in_array($post['ContentType'], ['Image', 'Video'])) {
+                                    $mediaTag = $post['ContentType'] === 'Image'
+                                        ? "<img src='" . htmlspecialchars($post['ContentLink']) . "' alt='Post Image' style='max-width: 100%; border-radius: 5px;'/>"
+                                        : "<video controls style='max-width: 100%; border-radius: 5px;'><source src='" . htmlspecialchars($post['ContentLink']) . "' type='video/mp4'>Your browser does not support the video tag.</video>";
+                                    echo $mediaTag;
+                                }
+
+                            echo "<p style='font-size: 0.75rem; color: #777;'>Posted on: " . htmlspecialchars($post['CreationDate']) . "</p>
+                    </div>";
+                        }
+                    } else {
+                        echo "<p style='font-size: 0.85rem;'>No posts available.</p>";
+                    }
+                    ?>
                 </div>
             </section>
+
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
-                <p>Latest Messages</p>
-                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; min-height: 200px;">
+                <p>Friends</p>
+                <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+                    <?php
+                    // Fetch confirmed friends for the current user
+                    $query = "
+                        SELECT 
+                            Members.MemberID, 
+                            Members.Username, 
+                            Members.FirstName, 
+                            Members.LastName 
+                        FROM 
+                            Connections 
+                        INNER JOIN 
+                            Members ON 
+                            (Connections.MemberID1 = Members.MemberID AND Connections.MemberID2 = $user_id) 
+                            OR 
+                            (Connections.MemberID2 = Members.MemberID AND Connections.MemberID1 = $user_id) 
+                        WHERE 
+                            Connections.Status = 'Confirmed'
+                        LIMIT 10";
+                    $result = $conn->query($query);
 
+                    if ($result->num_rows > 0) {
+                        while ($friend = $result->fetch_assoc()) {
+                            echo "<a href='http://localhost:3000/profile.php?member_id=" . htmlspecialchars($friend['MemberID']) . "' 
+                                style='text-decoration: none; color: inherit; width: 100%;'>
+                                <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
+                                    <p><strong>" . htmlspecialchars($friend['FirstName']) . " " . htmlspecialchars($friend['LastName']) . "</strong> - " . htmlspecialchars($friend['Username']) . "</p>
+                                </div>
+                            </a>";
+                        }
+                    } else {
+                        echo "<p style='font-size: 0.85rem;'>No friends found.</p>";
+                    }
+                    ?>
                 </div>
-                <p>Latest Friend Requests</p>
-                <div style="display: grid; grid-template-columns: 1fr; gap: 1rem; min-height: 200px;">
 
+
+                <p>Latest Friend Requests</p>
+                <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
+                    <?php
+                    // Fetch latest friend requests for the current user
+                    $query = "
+                        SELECT 
+                            Members.MemberID, 
+                            Members.Username, 
+                            Members.FirstName, 
+                            Members.LastName 
+                        FROM 
+                            Connections 
+                        INNER JOIN 
+                            Members ON Connections.MemberID1 = Members.MemberID 
+                        WHERE 
+                            Connections.MemberID2 = $user_id 
+                            AND Connections.Status = 'Requested'
+                        ORDER BY 
+                            Connections.RequestDate DESC
+                        LIMIT 10";
+                    $result = $conn->query($query);
+
+                    if ($result->num_rows > 0) {
+                        while ($request = $result->fetch_assoc()) {
+                            echo "<a href='http://localhost:3000/profile.php?member_id=" . htmlspecialchars($request['MemberID']) . "' 
+                                style='text-decoration: none; color: inherit; width: 100%;'>
+                                <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
+                                    <p><strong>" . htmlspecialchars($request['FirstName']) . " " . htmlspecialchars($request['LastName']) . "</strong> - " . htmlspecialchars($request['Username']) . "</p>
+                                </div>
+                            </a>";
+                        }
+                    } else {
+                        echo "<p style='font-size: 0.85rem;'>No new friend requests.</p>";
+                    }
+                    ?>
                 </div>
             </section>
+
 
         </section>
     </section>
