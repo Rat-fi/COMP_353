@@ -37,13 +37,36 @@ $group = $result->fetch_assoc();
 $stmt->close();
 $conn->close();
 ?>
-
+<?php include('includes/header.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Group</title>
+    <style>
+        body{
+            text-align: center;
+        }
+        .form-group{
+            margin-top:10px;
+            margin-bottom: 20px;
+        }
+
+        form{
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        button{
+            align-self: end;
+        }
+
+        input{
+            margin-top:10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
@@ -58,3 +81,4 @@ $conn->close();
     </div>
 </body>
 </html>
+<?php include('includes/footer.php'); ?>
