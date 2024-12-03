@@ -35,8 +35,13 @@ if (session_status() === PHP_SESSION_NONE) {
                             <p>My Connections</p>
                         </a></li>
                     <li><a href="chat_list.php">
-                        <p>Chat</p>
-                    </a></li>
+                            <p>Chat</p>
+                        </a></li>
+                    <?php if (isset($_SESSION['privilege']) && $_SESSION['privilege'] === 'Administrator'): ?>
+                        <li><a href="admin.php">
+                                <p>Admin</p>
+                            </a></li>
+                    <?php endif; ?>
                     <li><a href="logout.php">
                             <p>Logout</p>
                         </a></li>
