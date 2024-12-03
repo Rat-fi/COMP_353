@@ -4,13 +4,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     include('config.php');
 
-    $stmt = $conn->prepare("DELETE FROM groups WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM UserGroups WHERE GroupID = ?");
     $stmt->bind_param("i", $group_id);
 
     if ($stmt->execute()) {
         echo "success";
     } else {
-        echo "error";
+        echo "error: " . $stmt->error;
     }
 
     $stmt->close();

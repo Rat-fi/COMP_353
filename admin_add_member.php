@@ -8,14 +8,17 @@ if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator'
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $full_name = $_POST['full_name'];
+    $first_name = $_POST['first_name'];
+    $last_name = $_POST['last_name'];
     $username = $_POST['username'];
+    $email = $_POST['email'];
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);  // Hashing the password
     $privilege = $_POST['privilege'];
 
     include('config.php');
     
-    $stmt = $conn->prepare("INSERT INTO members (full_name, username, privilege) VALUES (?, ?, ?)");
-    $stmt->bind_param("sss", $full_name, $username, $privilege);
+    $stmt = $conn->prepare("INSERT INTO Members (Username, Password, Email, FirstName, LastName, Privilege) VALUES (?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param("ssssss", $username, $password, $email, $first_name, $last_name, $privilege);
     if ($stmt->execute()) {
         header("Location: admin.php");
         exit();
@@ -40,17 +43,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Add Member</h2>
         <form method="POST" action="">
             <div class="form-group">
-                <label for="full_name">Full Name</label>
-                <input type="text" class="form-control" id="full_name" name="full_name" required>
+                <label for="first_name">First Name</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" required>
+            </div>
+            <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input type="text" class="form-control" id="last_name" name="last_name">
             </div>
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
             <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
                 <label for="privilege">Privilege</label>
                 <select class="form-control" id="privilege" name="privilege">
-                    <option value="Member">Member</option>
+                    <option value="Junior">Junior</option>
+                    <option value="Senior">Senior</option>
                     <option value="Administrator">Administrator</option>
                 </select>
             </div>

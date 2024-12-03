@@ -4,13 +4,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     include('config.php');
 
-    $stmt = $conn->prepare("DELETE FROM members WHERE id = ?");
+    $stmt = $conn->prepare("DELETE FROM Members WHERE MemberID = ?");
     $stmt->bind_param("i", $member_id);
 
     if ($stmt->execute()) {
         echo "success";
     } else {
-        echo "error";
+        echo "error: " . $stmt->error;
     }
 
     $stmt->close();

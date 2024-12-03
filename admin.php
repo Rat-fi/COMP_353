@@ -3,6 +3,7 @@ session_start();
 
 include('config.php');
 
+// Check if the user has Administrator privilege
 if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator') {
     echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>
             <h1>Access Denied Page For Non Admins.</h1>
@@ -10,8 +11,9 @@ if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator'
     exit;
 }
 
-$members_result = $conn->query("SELECT * FROM members");
-$groups_result = $conn->query("SELECT * FROM groups");
+// Fetch members and groups from the database
+$members_result = $conn->query("SELECT * FROM Members");
+$groups_result = $conn->query("SELECT * FROM UserGroups");
 $conn->close();
 ?>
 
@@ -21,6 +23,7 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -41,42 +44,42 @@ $conn->close();
                 <input type="text" id="search-member" placeholder="Search Members" class="form-control mt-3">
                 <div id="members-list" class="mt-3">
                     <?php while ($member = $members_result->fetch_assoc()): ?>
-                        <div class="card mb-3" id="member-<?php echo $member['id']; ?>">
+                        <div class="card mb-3" id="member-<?php echo $member['MemberID']; ?>">
                             <div class="card-body d-flex">
                                 <div class="w-50">
-                                    <h5><?php echo $member['full_name']; ?></h5>
-                                    <p class="text-muted"><?php echo $member['username']; ?></p>
+                                    <h5><?php echo $member['FirstName'] . ' ' . $member['LastName']; ?></h5>
+                                    <p class="text-muted"><?php echo $member['Username']; ?></p>
                                 </div>
                                 <div class="w-25">
-                                    <p class="text-muted">Member Id: <?php echo $member['id']; ?></p>
+                                    <p class="text-muted">Member ID: <?php echo $member['MemberID']; ?></p>
                                 </div>
                                 <div class="w-25 text-right">
-                                    <a href="admin_edit_member.php?id=<?php echo $member['id']; ?>" class="btn btn-warning">Edit</a>
-                                    <button class="btn btn-danger delete-member" data-id="<?php echo $member['id']; ?>">Delete</button>
+                                    <a href="admin_edit_member.php?id=<?php echo $member['MemberID']; ?>" class="btn btn-warning">Edit</a>
+                                    <button class="btn btn-danger delete-member" data-id="<?php echo $member['MemberID']; ?>">Delete</button>
                                 </div>
                             </div>
                         </div>
                     <?php endwhile; ?>
                 </div>
             </div>
-            
+
             <!-- Groups Tab -->
             <div class="tab-pane fade" id="groups">
                 <button onclick="window.location.href='admin_add_group.php'" class="btn btn-primary">Add Group</button>
                 <input type="text" id="search-group" placeholder="Search Groups" class="form-control mt-3">
                 <div id="groups-list" class="mt-3">
                     <?php while ($group = $groups_result->fetch_assoc()): ?>
-                        <div class="card mb-3" id="group-<?php echo $group['id']; ?>">
+                        <div class="card mb-3" id="group-<?php echo $group['GroupID']; ?>">
                             <div class="card-body d-flex">
                                 <div class="w-50">
-                                    <h5><?php echo $group['group_name']; ?></h5>
+                                    <h5><?php echo $group['GroupName']; ?></h5>
                                 </div>
                                 <div class="w-25">
-                                    <p class="text-muted">Group Id: <?php echo $group['id']; ?></p>
+                                    <p class="text-muted">Group ID: <?php echo $group['GroupID']; ?></p>
                                 </div>
                                 <div class="w-25 text-right">
-                                    <a href="admin_edit_group.php?id=<?php echo $group['id']; ?>" class="btn btn-warning">Edit</a>
-                                    <button class="btn btn-danger delete-group" data-id="<?php echo $group['id']; ?>">Delete</button>
+                                    <a href="admin_edit_group.php?id=<?php echo $group['GroupID']; ?>" class="btn btn-warning">Edit</a>
+                                    <button class="btn btn-danger delete-group" data-id="<?php echo $group['GroupID']; ?>">Delete</button>
                                 </div>
                             </div>
                         </div>
@@ -124,8 +127,8 @@ $conn->close();
                 });
             }
         });
-        
-        // Optional: Implement search functionality for members and groups
+
+        // Search functionality for members
         $("#search-member").on("input", function() {
             var searchTerm = $(this).val().toLowerCase();
             $(".card", "#members-list").each(function() {
@@ -139,6 +142,7 @@ $conn->close();
             });
         });
 
+        // Search functionality for groups
         $("#search-group").on("input", function() {
             var searchTerm = $(this).val().toLowerCase();
             $(".card", "#groups-list").each(function() {

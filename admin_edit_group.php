@@ -2,6 +2,7 @@
 session_start();
 include('config.php');
 
+// Check if the user is an Administrator
 if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator') {
     echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>
             <h1>Access Denied Page For Non Admins.</h1>
@@ -9,12 +10,14 @@ if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator'
     exit;
 }
 
+// Get the Group ID from the query string
 $group_id = $_GET['id'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $group_name = $_POST['group_name'];
 
-    $stmt = $conn->prepare("UPDATE groups SET group_name=? WHERE id=?");
+    // Update group details
+    $stmt = $conn->prepare("UPDATE UserGroups SET GroupName=? WHERE GroupID=?");
     $stmt->bind_param("si", $group_name, $group_id);
     if ($stmt->execute()) {
         header("Location: admin.php");
@@ -22,12 +25,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         echo "Error: " . $stmt->error;
     }
-
     $stmt->close();
 }
 
-$result = $conn->query("SELECT * FROM groups WHERE id = $group_id");
+// Fetch the existing group details
+$stmt = $conn->prepare("SELECT * FROM UserGroups WHERE GroupID = ?");
+$stmt->bind_param("i", $group_id);
+$stmt->execute();
+$result = $stmt->get_result();
 $group = $result->fetch_assoc();
+$stmt->close();
 $conn->close();
 ?>
 
@@ -44,7 +51,7 @@ $conn->close();
         <form method="POST" action="">
             <div class="form-group">
                 <label for="group_name">Group Name</label>
-                <input type="text" class="form-control" id="group_name" name="group_name" value="<?php echo $group['group_name']; ?>" required>
+                <input type="text" class="form-control" id="group_name" name="group_name" value="<?php echo htmlspecialchars($group['GroupName'], ENT_QUOTES); ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Update Group</button>
         </form>
