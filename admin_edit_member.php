@@ -16,10 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $last_name = $_POST['last_name'];
     $username = $_POST['username'];
     $privilege = $_POST['privilege'];
+    $status = $_POST['status']; // Get the status from the form
 
     // Update query to reflect the new schema
-    $stmt = $conn->prepare("UPDATE Members SET FirstName=?, LastName=?, Username=?, Privilege=? WHERE MemberID=?");
-    $stmt->bind_param("ssssi", $first_name, $last_name, $username, $privilege, $member_id);
+    $stmt = $conn->prepare("UPDATE Members SET FirstName=?, LastName=?, Username=?, Privilege=?, Status=? WHERE MemberID=?");
+    $stmt->bind_param("sssssi", $first_name, $last_name, $username, $privilege, $status, $member_id);
+    
     if ($stmt->execute()) {
         header("Location: admin.php");
         exit();
@@ -45,26 +47,23 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Member</title>
     <style>
-        body{
+        body {
             text-align: center;
         }
-        .form-group{
-            margin-top:10px;
+        .form-group {
+            margin-top: 10px;
             margin-bottom: 20px;
         }
-
-        form{
+        form {
             display: flex;
             flex-direction: column;
             text-align: left;
         }
-
-        button{
+        button {
             align-self: end;
         }
-
-        input{
-            margin-top:10px;
+        input, select {
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -74,15 +73,15 @@ $conn->close();
         <form method="POST" action="">
             <div class="form-group">
                 <label for="first_name">First Name</label>
-                <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo $member['FirstName']; ?>" required>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="<?php echo htmlspecialchars($member['FirstName']); ?>" required>
             </div>
             <div class="form-group">
                 <label for="last_name">Last Name</label>
-                <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo $member['LastName']; ?>" required>
+                <input type="text" class="form-control" id="last_name" name="last_name" value="<?php echo htmlspecialchars($member['LastName']); ?>" required>
             </div>
             <div class="form-group">
                 <label for="username">Username</label>
-                <input type="text" class="form-control" id="username" name="username" value="<?php echo $member['Username']; ?>" required>
+                <input type="text" class="form-control" id="username" name="username" value="<?php echo htmlspecialchars($member['Username']); ?>" required>
             </div>
             <div class="form-group">
                 <label for="privilege">Privilege</label>
@@ -90,6 +89,14 @@ $conn->close();
                     <option value="Junior" <?php if ($member['Privilege'] == 'Junior') echo 'selected'; ?>>Junior</option>
                     <option value="Senior" <?php if ($member['Privilege'] == 'Senior') echo 'selected'; ?>>Senior</option>
                     <option value="Administrator" <?php if ($member['Privilege'] == 'Administrator') echo 'selected'; ?>>Administrator</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">Status</label>
+                <select class="form-control" id="status" name="status">
+                    <option value="Active" <?php if ($member['Status'] == 'Active') echo 'selected'; ?>>Active</option>
+                    <option value="Inactive" <?php if ($member['Status'] == 'Inactive') echo 'selected'; ?>>Inactive</option>
+                    <option value="Suspended" <?php if ($member['Status'] == 'Suspended') echo 'selected'; ?>>Suspended</option>
                 </select>
             </div>
             <button type="submit" class="btn btn-primary">Update Member</button>
