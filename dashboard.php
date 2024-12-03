@@ -57,6 +57,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
         </div>
 
         <section style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+            <!-- Latest Messages -->
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 <p>Latest Messages</p>
                 <div style="height: 500px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
@@ -96,6 +97,8 @@ $_SESSION['LAST_ACTIVITY'] = time();
                     ?>
                 </div>
             </section>
+
+            <!-- Latest Posts -->
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 <p>Latest Posts</p>
                 <div style="height: 500px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
@@ -159,45 +162,44 @@ $_SESSION['LAST_ACTIVITY'] = time();
                     ?>
                 </div>
             </section>
+
+            <!-- Groups Section -->
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
-                <p>Friends</p>
+                <p>Groups</p>
                 <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
-                    // Fetch confirmed friends for the current user
+                    // Fetch groups the user is part of
                     $query = "
                         SELECT 
-                            Members.MemberID, 
-                            Members.Username, 
-                            Members.FirstName, 
-                            Members.LastName 
+                            UserGroups.GroupID, 
+                            UserGroups.GroupName, 
+                            UserGroups.Description, 
+                            GroupMembers.Role 
                         FROM 
-                            Connections 
+                            UserGroups
                         INNER JOIN 
-                            Members ON 
-                            (Connections.MemberID1 = Members.MemberID AND Connections.MemberID2 = $user_id) 
-                            OR 
-                            (Connections.MemberID2 = Members.MemberID AND Connections.MemberID1 = $user_id) 
+                            GroupMembers ON UserGroups.GroupID = GroupMembers.GroupID
                         WHERE 
-                            Connections.Status = 'Confirmed'
-                        LIMIT 10";
+                            GroupMembers.MemberID = $user_id AND GroupMembers.Status = 'Approved'
+                        ORDER BY 
+                            GroupMembers.Role ASC, UserGroups.GroupName ASC";
                     $result = $conn->query($query);
 
                     if ($result->num_rows > 0) {
-                        while ($friend = $result->fetch_assoc()) {
-                            echo "<a href='http://localhost:3000/profile.php?member_id=" . htmlspecialchars($friend['MemberID']) . "' 
-                                style='text-decoration: none; color: inherit; width: 100%;'>
+                        while ($group = $result->fetch_assoc()) {
+                            echo "<a href='group.php?group_id=" . htmlspecialchars($group['GroupID']) . "' style='text-decoration: none; color: inherit; width: 100%;'>
                                 <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
-                                    <p><strong>" . htmlspecialchars($friend['FirstName']) . " " . htmlspecialchars($friend['LastName']) . "</strong> - " . htmlspecialchars($friend['Username']) . "</p>
+                                    <p><strong>" . htmlspecialchars($group['GroupName']) . "</strong> 
+                                    <span style='font-size: 0.75rem; color: #777;'>(" . htmlspecialchars($group['Role']) . ")</span></p>
+                                    <p style='font-size: 0.75rem;'>" . htmlspecialchars($group['Description']) . "</p>
                                 </div>
                             </a>";
                         }
                     } else {
-                        echo "<p style='font-size: 0.85rem;'>No friends found.</p>";
+                        echo "<p style='font-size: 0.85rem;'>No groups found.</p>";
                     }
                     ?>
                 </div>
-
-
                 <p>Latest Friend Requests</p>
                 <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
@@ -222,7 +224,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
                     if ($result->num_rows > 0) {
                         while ($request = $result->fetch_assoc()) {
-                            echo "<a href='http://localhost:3000/profile.php?member_id=" . htmlspecialchars($request['MemberID']) . "' 
+                            echo "<a href='connections.php' 
                                 style='text-decoration: none; color: inherit; width: 100%;'>
                                 <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
                                     <p><strong>" . htmlspecialchars($request['FirstName']) . " " . htmlspecialchars($request['LastName']) . "</strong> - " . htmlspecialchars($request['Username']) . "</p>
@@ -235,8 +237,6 @@ $_SESSION['LAST_ACTIVITY'] = time();
                     ?>
                 </div>
             </section>
-
-
         </section>
     </section>
 </main>

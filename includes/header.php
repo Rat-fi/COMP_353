@@ -28,23 +28,38 @@ if (session_status() === PHP_SESSION_NONE) {
             </div>
             <ul class="nav-links">
                 <?php if (isset($_SESSION['user_id'])): ?>
-                    <li><a href="dashboard.php">
+                    <li>
+                        <a href="dashboard.php">
                             <p>Home</p>
-                        </a></li>
-                    <li><a href="connections.php">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="connections.php">
                             <p>My Connections</p>
-                        </a></li>
-                    <li><a href="chat_list.php">
+                        </a>
+                    </li>
+                    <li>
+                        <a href="groups.php">
+                            <p>My Groups</p>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="chat_list.php">
                             <p>Chat</p>
-                        </a></li>
+                        </a>
+                    </li>
                     <?php if (isset($_SESSION['privilege']) && $_SESSION['privilege'] === 'Administrator'): ?>
-                        <li><a href="admin.php">
+                        <li>
+                            <a href="admin.php">
                                 <p>Admin</p>
-                            </a></li>
+                            </a>
+                        </li>
                     <?php endif; ?>
-                    <li><a href="logout.php">
+                    <li>
+                        <a href="logout.php">
                             <p>Logout</p>
-                        </a></li>
+                        </a>
+                    </li>
                 <?php else: ?>
                     <li><a href="register.php">Register</a></li>
                     <li><a href="login.php">Login</a></li>
