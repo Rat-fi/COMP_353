@@ -82,7 +82,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
                     if ($result->num_rows > 0) {
                         while ($message = $result->fetch_assoc()) {
-                            echo "<a href='http://localhost:3000/chat.php?member_id=" . htmlspecialchars($message['SenderID']) . "' 
+                            echo "<a href='chat.php?member_id=" . htmlspecialchars($message['SenderID']) . "' 
                                 style='text-decoration: none; color: inherit; width: 100%;'>
                                 <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
                                     <p><strong>" . htmlspecialchars($message['SenderName']) . ":</strong> " . htmlspecialchars($message['Content']) . "</p>
