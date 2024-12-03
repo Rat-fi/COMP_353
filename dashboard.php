@@ -134,22 +134,24 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
                     if ($result->num_rows > 0) {
                         while ($post = $result->fetch_assoc()) {
-                            echo "<div style='background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem; width: 99%;'>
-                                <p><strong>" . htmlspecialchars($post['FirstName']) . " " . htmlspecialchars($post['LastName']) . "</strong> 
-                                <span style='font-size: 0.75rem; color: #777;'>(" . htmlspecialchars($post['Visibility']) .
-                                        (!empty($post['GroupName']) ? " in " . htmlspecialchars($post['GroupName']) : "") . ")</span></p>
-                                <p>" . htmlspecialchars($post['ContentText']) . "</p>";
+                            echo "<a href='post.php?post_id=" . htmlspecialchars($post['PostID']) . "' style='text-decoration: none; color: inherit; width: 100%;'>
+                                <div style='background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem; width: 99%;'>
+                                    <p><strong>" . htmlspecialchars($post['FirstName']) . " " . htmlspecialchars($post['LastName']) . "</strong> 
+                                    <span style='font-size: 0.75rem; color: #777;'>(" . htmlspecialchars($post['Visibility']) .
+                                            (!empty($post['GroupName']) ? " in " . htmlspecialchars($post['GroupName']) : "") . ")</span></p>
+                                    <p>" . htmlspecialchars($post['ContentText']) . "</p>";
 
-                                // Display content link for images/videos
-                                if (!empty($post['ContentLink']) && in_array($post['ContentType'], ['Image', 'Video'])) {
-                                    $mediaTag = $post['ContentType'] === 'Image'
-                                        ? "<img src='" . htmlspecialchars($post['ContentLink']) . "' alt='Post Image' style='max-width: 100%; border-radius: 5px;'/>"
-                                        : "<video controls style='max-width: 100%; border-radius: 5px;'><source src='" . htmlspecialchars($post['ContentLink']) . "' type='video/mp4'>Your browser does not support the video tag.</video>";
-                                    echo $mediaTag;
-                                }
+                                        // Display content link for images/videos
+                                        if (!empty($post['ContentLink']) && in_array($post['ContentType'], ['Image', 'Video'])) {
+                                            $mediaTag = $post['ContentType'] === 'Image'
+                                                ? "<img src='" . htmlspecialchars($post['ContentLink']) . "' alt='Post Image' style='max-width: 100%; border-radius: 5px;'/>"
+                                                : "<video controls style='max-width: 100%; border-radius: 5px;'><source src='" . htmlspecialchars($post['ContentLink']) . "' type='video/mp4'>Your browser does not support the video tag.</video>";
+                                            echo $mediaTag;
+                                        }
 
-                            echo "<p style='font-size: 0.75rem; color: #777;'>Posted on: " . htmlspecialchars($post['CreationDate']) . "</p>
-                    </div>";
+                                        echo "<p style='font-size: 0.75rem; color: #777;'>Posted on: " . htmlspecialchars($post['CreationDate']) . "</p>
+                                </div>
+                            </a>";
                         }
                     } else {
                         echo "<p style='font-size: 0.85rem;'>No posts available.</p>";
@@ -157,7 +159,6 @@ $_SESSION['LAST_ACTIVITY'] = time();
                     ?>
                 </div>
             </section>
-
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 <p>Friends</p>
                 <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
