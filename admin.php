@@ -19,7 +19,6 @@ $conn->close();
 
 <?php include('includes/header.php'); ?>
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -45,7 +44,6 @@ $conn->close();
             justify-content: center;
             margin-bottom: 20px;
         }
- 
 
         /* Tab content */
         .tab-content {
@@ -116,7 +114,7 @@ $conn->close();
         </div>
 
         <!-- Tab content -->
-        <div class="tab-content" id="members">
+        <div class="tab-content active" id="members">
             <button onclick="window.location.href='admin_add_member.php'" class="btn btn-primary">Add Member</button>
             <input type="text" id="search-member" placeholder="Search Members" class="form-control">
             <div id="members-list">
@@ -159,6 +157,7 @@ $conn->close();
         const tabs = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
 
+        // Tab switching logic
         tabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 // Remove active class from all tabs and content
@@ -241,4 +240,5 @@ $conn->close();
     </script>
 </body>
 </html>
+
 <?php include('includes/footer.php'); ?>
