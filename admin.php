@@ -25,7 +25,6 @@ $conn->close();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
-    <link rel="stylesheet" href="style.css">
     <style>
         /* Basic styling for the page */
         body {
@@ -220,7 +219,7 @@ $conn->close();
                 if (fullName.indexOf(searchTerm) === -1 && username.indexOf(searchTerm) === -1) {
                     card.style.display = 'none';
                 } else {
-                    card.style.display = 'block';
+                    card.style.display = 'flex';
                 }
             });
         });
@@ -233,7 +232,7 @@ $conn->close();
                 if (groupName.indexOf(searchTerm) === -1) {
                     card.style.display = 'none';
                 } else {
-                    card.style.display = 'block';
+                    card.style.display = 'flex';
                 }
             });
         });

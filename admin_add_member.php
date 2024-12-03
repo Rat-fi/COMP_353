@@ -30,40 +30,63 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->close();
 }
 ?>
-
+<?php include('includes/header.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Member</title>
+    <style>
+        body{
+            text-align: center;
+        }
+        .form-group{
+            margin-top:10px;
+            margin-bottom: 20px;
+        }
+
+        form{
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        button{
+            align-self: end;
+        }
+
+        input{
+            margin-top:10px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h2>Add Member</h2>
+        <h2>Add New Member</h2>
         <form method="POST" action="">
             <div class="form-group">
-                <label for="first_name">First Name</label>
+                <label for="first_name">First Name:</label>
                 <input type="text" class="form-control" id="first_name" name="first_name" required>
             </div>
             <div class="form-group">
-                <label for="last_name">Last Name</label>
+                <label for="last_name">Last Name:</label>
                 <input type="text" class="form-control" id="last_name" name="last_name">
             </div>
             <div class="form-group">
-                <label for="username">Username</label>
+                <label for="username">Username:</label>
                 <input type="text" class="form-control" id="username" name="username" required>
             </div>
             <div class="form-group">
-                <label for="email">Email</label>
+                <label for="email">Email:</label>
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
             <div class="form-group">
-                <label for="password">Password</label>
+                <label for="password">Password:</label>
                 <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <div class="form-group">
-                <label for="privilege">Privilege</label>
+                <label for="privilege">Privilege:</label>
                 <select class="form-control" id="privilege" name="privilege">
                     <option value="Junior">Junior</option>
                     <option value="Senior">Senior</option>
@@ -75,3 +98,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
+<?php include('includes/footer.php'); ?>
