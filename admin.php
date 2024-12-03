@@ -17,6 +17,9 @@ $groups_result = $conn->query("SELECT * FROM UserGroups");
 $conn->close();
 ?>
 
+<?php include('includes/header.php'); ?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,136 +27,218 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
     <link rel="stylesheet" href="style.css">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Basic styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        /* Tab container */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+ 
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ccc;
+            background-color: #fff;
+            border-top: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Card style */
+        .card {
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+
+        .card h5 {
+            margin: 0;
+            font-size: 18px;
+        }
+
+        .card p {
+            margin: 5px 0;
+        }
+
+        .card .btn {
+            margin-top: 10px;
+            padding: 5px 10px;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn-warning {
+            background-color: #f0ad4e;
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: #d9534f;
+            color: white;
+        }
+
+        /* Search input */
+        .form-control {
+            padding: 10px;
+            margin-top: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
         <h2>Admin Page</h2>
-        <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link active" id="members-tab" data-bs-toggle="tab" href="#members">Members</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" id="groups-tab" data-bs-toggle="tab" href="#groups">Groups</a>
-            </li>
-        </ul>
-        <div class="tab-content mt-3">
-            <!-- Members Tab -->
-            <div class="tab-pane fade show active" id="members">
-                <button onclick="window.location.href='admin_add_member.php'" class="btn btn-primary">Add Member</button>
-                <input type="text" id="search-member" placeholder="Search Members" class="form-control mt-3">
-                <div id="members-list" class="mt-3">
-                    <?php while ($member = $members_result->fetch_assoc()): ?>
-                        <div class="card mb-3" id="member-<?php echo $member['MemberID']; ?>">
-                            <div class="card-body d-flex">
-                                <div class="w-50">
-                                    <h5><?php echo $member['FirstName'] . ' ' . $member['LastName']; ?></h5>
-                                    <p class="text-muted"><?php echo $member['Username']; ?></p>
-                                </div>
-                                <div class="w-25">
-                                    <p class="text-muted">Member ID: <?php echo $member['MemberID']; ?></p>
-                                </div>
-                                <div class="w-25 text-right">
-                                    <a href="admin_edit_member.php?id=<?php echo $member['MemberID']; ?>" class="btn btn-warning">Edit</a>
-                                    <button class="btn btn-danger delete-member" data-id="<?php echo $member['MemberID']; ?>">Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
-                </div>
-            </div>
+        <!-- Tab links -->
+        <div class="tabs">
+            <div class="tab-button active" data-target="#members">Members</div>
+            <div class="tab-button" data-target="#groups">Groups</div>
+        </div>
 
-            <!-- Groups Tab -->
-            <div class="tab-pane fade" id="groups">
-                <button onclick="window.location.href='admin_add_group.php'" class="btn btn-primary">Add Group</button>
-                <input type="text" id="search-group" placeholder="Search Groups" class="form-control mt-3">
-                <div id="groups-list" class="mt-3">
-                    <?php while ($group = $groups_result->fetch_assoc()): ?>
-                        <div class="card mb-3" id="group-<?php echo $group['GroupID']; ?>">
-                            <div class="card-body d-flex">
-                                <div class="w-50">
-                                    <h5><?php echo $group['GroupName']; ?></h5>
-                                </div>
-                                <div class="w-25">
-                                    <p class="text-muted">Group ID: <?php echo $group['GroupID']; ?></p>
-                                </div>
-                                <div class="w-25 text-right">
-                                    <a href="admin_edit_group.php?id=<?php echo $group['GroupID']; ?>" class="btn btn-warning">Edit</a>
-                                    <button class="btn btn-danger delete-group" data-id="<?php echo $group['GroupID']; ?>">Delete</button>
-                                </div>
-                            </div>
+        <!-- Tab content -->
+        <div class="tab-content" id="members">
+            <button onclick="window.location.href='admin_add_member.php'" class="btn btn-primary">Add Member</button>
+            <input type="text" id="search-member" placeholder="Search Members" class="form-control">
+            <div id="members-list">
+                <?php while ($member = $members_result->fetch_assoc()): ?>
+                    <div class="card" id="member-<?php echo $member['MemberID']; ?>">
+                        <div>
+                            <h5><?php echo $member['FirstName'] . ' ' . $member['LastName']; ?></h5>
+                            <p class="text-muted"><?php echo $member['Username']; ?></p>
                         </div>
-                    <?php endwhile; ?>
-                </div>
+                        <div class="text-right">
+                            <a href="admin_edit_member.php?id=<?php echo $member['MemberID']; ?>" class="btn btn-warning">Edit</a>
+                            <button class="btn btn-danger delete-member" data-id="<?php echo $member['MemberID']; ?>">Delete</button>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+        </div>
+
+        <div class="tab-content" id="groups">
+            <button onclick="window.location.href='admin_add_group.php'" class="btn btn-primary">Add Group</button>
+            <input type="text" id="search-group" placeholder="Search Groups" class="form-control">
+            <div id="groups-list">
+                <?php while ($group = $groups_result->fetch_assoc()): ?>
+                    <div class="card" id="group-<?php echo $group['GroupID']; ?>">
+                        <div>
+                            <h5><?php echo $group['GroupName']; ?></h5>
+                        </div>
+                        <div class="text-right">
+                            <a href="admin_edit_group.php?id=<?php echo $group['GroupID']; ?>" class="btn btn-warning">Edit</a>
+                            <button class="btn btn-danger delete-group" data-id="<?php echo $group['GroupID']; ?>">Delete</button>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
             </div>
         </div>
     </div>
 
     <script>
+        // Tab functionality
+        const tabs = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', function() {
+                // Remove active class from all tabs and content
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(content => content.classList.remove('active'));
+
+                // Add active class to the clicked tab and corresponding content
+                tab.classList.add('active');
+                const target = document.querySelector(tab.getAttribute('data-target'));
+                target.classList.add('active');
+            });
+        });
+
         // Ajax for deleting members
-        $(".delete-member").click(function() {
-            var memberId = $(this).data("id");
-            if (confirm("Are you sure you want to delete this member?")) {
-                $.ajax({
-                    type: "POST",
-                    url: "admin_delete_member.php",
-                    data: { id: memberId },
-                    success: function(response) {
-                        if (response === "success") {
-                            $("#member-" + memberId).fadeOut();
+        document.querySelectorAll(".delete-member").forEach(button => {
+            button.addEventListener('click', function() {
+                var memberId = this.getAttribute("data-id");
+                if (confirm("Are you sure you want to delete this member?")) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "admin_delete_member.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onload = function() {
+                        if (xhr.responseText === "success") {
+                            document.getElementById("member-" + memberId).style.display = "none";
                         } else {
                             alert("Error deleting member.");
                         }
-                    }
-                });
-            }
+                    };
+                    xhr.send("id=" + memberId);
+                }
+            });
         });
 
         // Ajax for deleting groups
-        $(".delete-group").click(function() {
-            var groupId = $(this).data("id");
-            if (confirm("Are you sure you want to delete this group?")) {
-                $.ajax({
-                    type: "POST",
-                    url: "admin_delete_group.php",
-                    data: { id: groupId },
-                    success: function(response) {
-                        if (response === "success") {
-                            $("#group-" + groupId).fadeOut();
+        document.querySelectorAll(".delete-group").forEach(button => {
+            button.addEventListener('click', function() {
+                var groupId = this.getAttribute("data-id");
+                if (confirm("Are you sure you want to delete this group?")) {
+                    var xhr = new XMLHttpRequest();
+                    xhr.open("POST", "admin_delete_group.php", true);
+                    xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                    xhr.onload = function() {
+                        if (xhr.responseText === "success") {
+                            document.getElementById("group-" + groupId).style.display = "none";
                         } else {
                             alert("Error deleting group.");
                         }
-                    }
-                });
-            }
+                    };
+                    xhr.send("id=" + groupId);
+                }
+            });
         });
 
         // Search functionality for members
-        $("#search-member").on("input", function() {
-            var searchTerm = $(this).val().toLowerCase();
-            $(".card", "#members-list").each(function() {
-                var fullName = $(this).find("h5").text().toLowerCase();
-                var username = $(this).find(".text-muted").first().text().toLowerCase();
+        document.getElementById("search-member").addEventListener("input", function() {
+            var searchTerm = this.value.toLowerCase();
+            document.querySelectorAll(".card", "#members-list").forEach(card => {
+                var fullName = card.querySelector("h5").textContent.toLowerCase();
+                var username = card.querySelector(".text-muted").textContent.toLowerCase();
                 if (fullName.indexOf(searchTerm) === -1 && username.indexOf(searchTerm) === -1) {
-                    $(this).hide();
+                    card.style.display = 'none';
                 } else {
-                    $(this).show();
+                    card.style.display = 'block';
                 }
             });
         });
 
         // Search functionality for groups
-        $("#search-group").on("input", function() {
-            var searchTerm = $(this).val().toLowerCase();
-            $(".card", "#groups-list").each(function() {
-                var groupName = $(this).find("h5").text().toLowerCase();
+        document.getElementById("search-group").addEventListener("input", function() {
+            var searchTerm = this.value.toLowerCase();
+            document.querySelectorAll(".card", "#groups-list").forEach(card => {
+                var groupName = card.querySelector("h5").textContent.toLowerCase();
                 if (groupName.indexOf(searchTerm) === -1) {
-                    $(this).hide();
+                    card.style.display = 'none';
                 } else {
-                    $(this).show();
+                    card.style.display = 'block';
                 }
             });
         });
     </script>
 </body>
 </html>
+<?php include('includes/footer.php'); ?>
