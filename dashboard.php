@@ -124,10 +124,9 @@ $_SESSION['LAST_ACTIVITY'] = time();
                         LEFT JOIN 
                             GroupMembers ON Posts.GroupID = GroupMembers.GroupID
                         WHERE 
-                            Posts.Visibility = 'Public'
-                            OR (Posts.Visibility = 'Group' AND GroupMembers.MemberID = $user_id)
-                        AND 
-                            Posts.ModerationStatus = 'Approved'
+                            (Posts.Visibility = 'Public' AND Posts.ModerationStatus = 'Approved')
+                            OR 
+                            (Posts.Visibility = 'Group' AND GroupMembers.MemberID = $user_id AND Posts.ModerationStatus = 'Approved')
                         GROUP BY 
                             Posts.PostID
                         ORDER BY 
@@ -141,18 +140,18 @@ $_SESSION['LAST_ACTIVITY'] = time();
                                 <div style='background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem; width: 99%;'>
                                     <p><strong>" . htmlspecialchars($post['FirstName']) . " " . htmlspecialchars($post['LastName']) . "</strong> 
                                     <span style='font-size: 0.75rem; color: #777;'>(" . htmlspecialchars($post['Visibility']) .
-                                            (!empty($post['GroupName']) ? " in " . htmlspecialchars($post['GroupName']) : "") . ")</span></p>
+                                (!empty($post['GroupName']) ? " in " . htmlspecialchars($post['GroupName']) : "") . ")</span></p>
                                     <p>" . htmlspecialchars($post['ContentText']) . "</p>";
 
-                                        // Display content link for images/videos
-                                        if (!empty($post['ContentLink']) && in_array($post['ContentType'], ['Image', 'Video'])) {
-                                            $mediaTag = $post['ContentType'] === 'Image'
-                                                ? "<img src='" . htmlspecialchars($post['ContentLink']) . "' alt='Post Image' style='max-width: 100%; border-radius: 5px;'/>"
-                                                : "<video controls style='max-width: 100%; border-radius: 5px;'><source src='" . htmlspecialchars($post['ContentLink']) . "' type='video/mp4'>Your browser does not support the video tag.</video>";
-                                            echo $mediaTag;
-                                        }
+                            // Display content link for images/videos
+                            if (!empty($post['ContentLink']) && in_array($post['ContentType'], ['Image', 'Video'])) {
+                                $mediaTag = $post['ContentType'] === 'Image'
+                                    ? "<img src='" . htmlspecialchars($post['ContentLink']) . "' alt='Post Image' style='max-width: 100%; border-radius: 5px;'/>"
+                                    : "<video controls style='max-width: 100%; border-radius: 5px;'><source src='" . htmlspecialchars($post['ContentLink']) . "' type='video/mp4'>Your browser does not support the video tag.</video>";
+                                echo $mediaTag;
+                            }
 
-                                        echo "<p style='font-size: 0.75rem; color: #777;'>Posted on: " . htmlspecialchars($post['CreationDate']) . "</p>
+                            echo "<p style='font-size: 0.75rem; color: #777;'>Posted on: " . htmlspecialchars($post['CreationDate']) . "</p>
                                 </div>
                             </a>";
                         }
