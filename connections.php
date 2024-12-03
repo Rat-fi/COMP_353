@@ -110,24 +110,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
             echo "error";
         }
     } elseif (isset($_POST['block_connection'])) {
-        // Block the connection
-        $query = "
-            UPDATE Connections
-            SET Status = 'Blocked'
-            WHERE ConnectionID = ? 
-            AND (MemberID1 = ? OR MemberID2 = ?)
-        ";
-        if ($stmt = $conn->prepare($query)) {
-            $stmt->bind_param("iii", $connection_id, $user_id, $user_id);
-            if ($stmt->execute()) {
-                echo "success";
+       // Block the connection
+    // Step 1: Fetch the current relation and member IDs
+    $query = "
+        SELECT MemberID1, MemberID2, Relation
+        FROM Connections
+        WHERE ConnectionID = ?
+    ";
+    if ($stmt = $conn->prepare($query)) {
+        $stmt->bind_param("i", $connection_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($row = $result->fetch_assoc()) {
+            $member_id1 = $row['MemberID1'];
+            $member_id2 = $row['MemberID2'];
+            $relation = $row['Relation'];
+            $stmt->close();
+
+            // Step 2: Delete the old connection record
+            $query = "
+                DELETE FROM Connections
+                WHERE ConnectionID = ?
+            ";
+            if ($stmt = $conn->prepare($query)) {
+                $stmt->bind_param("i", $connection_id);
+                if ($stmt->execute()) {
+                    $stmt->close();
+
+                    // Step 3: Insert a new record with the user as MemberID1, blocked person as MemberID2, and status as 'Blocked'
+                    $query = "
+                        INSERT INTO Connections (MemberID1, MemberID2, Status, Relation)
+                        VALUES (?, ?, 'Blocked', ?)
+                    ";
+                    if ($stmt = $conn->prepare($query)) {
+                        // Ensure MemberID1 is the user and MemberID2 is the blocked person
+                        $blocked_member_id = ($user_id == $member_id1) ? $member_id2 : $member_id1;
+                        $stmt->bind_param("iis", $user_id, $blocked_member_id, $relation);
+                        if ($stmt->execute()) {
+                            echo "success";
+                        } else {
+                            echo "error";
+                        }
+                        $stmt->close();
+                    } else {
+                        echo "error";
+                    }
+                } else {
+                    echo "error";
+                }
             } else {
                 echo "error";
             }
-            $stmt->close();
         } else {
-            echo "error";
+            echo "error"; // No matching record found
         }
+    } else {
+        echo "error";
+    }
     } elseif (isset($_POST['unblock_connection'])) {
         // Unblock the connection
         $query = "
