@@ -16,18 +16,69 @@ $group_id = $_GET['id'];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $group_name = $_POST['group_name'];
     $description = isset($_POST['description']) ? $_POST['description'] : '';
-    $owner_id = $_POST['owner_id'];
+    $new_owner_id = $_POST['owner_id'];
 
-    // Update group details
-    $stmt = $conn->prepare("UPDATE UserGroups SET GroupName=?, Description=?, OwnerID=? WHERE GroupID=?");
-    $stmt->bind_param("ssii", $group_name, $description, $owner_id, $group_id);
-    if ($stmt->execute()) {
+    // Start transaction
+    $conn->begin_transaction();
+    try {
+        // Fetch the current owner ID
+        $stmt = $conn->prepare("SELECT OwnerID FROM UserGroups WHERE GroupID = ?");
+        $stmt->bind_param("i", $group_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $current_group = $result->fetch_assoc();
+        $old_owner_id = $current_group['OwnerID'];
+        $stmt->close();
+
+        // Update group details
+        $stmt = $conn->prepare("UPDATE UserGroups SET GroupName=?, Description=?, OwnerID=? WHERE GroupID=?");
+        $stmt->bind_param("ssii", $group_name, $description, $new_owner_id, $group_id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating UserGroups: " . $stmt->error);
+        }
+        $stmt->close();
+
+        // Update the role of the old owner in GroupMembers
+        $stmt = $conn->prepare("UPDATE GroupMembers SET Role='Member' WHERE GroupID=? AND MemberID=?");
+        $stmt->bind_param("ii", $group_id, $old_owner_id);
+        if (!$stmt->execute()) {
+            throw new Exception("Error updating old owner's role: " . $stmt->error);
+        }
+        $stmt->close();
+
+        // Check if the new owner exists in the GroupMembers table
+        $stmt = $conn->prepare("SELECT GroupMemberID FROM GroupMembers WHERE GroupID=? AND MemberID=?");
+        $stmt->bind_param("ii", $group_id, $new_owner_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        if ($result->num_rows > 0) {
+            // Update the role of the new owner to 'Owner'
+            $stmt = $conn->prepare("UPDATE GroupMembers SET Role='Owner' WHERE GroupID=? AND MemberID=?");
+            $stmt->bind_param("ii", $group_id, $new_owner_id);
+            if (!$stmt->execute()) {
+                throw new Exception("Error updating new owner's role: " . $stmt->error);
+            }
+        } else {
+            // Add the new owner to the GroupMembers table
+            $stmt = $conn->prepare("INSERT INTO GroupMembers (GroupID, MemberID, Role, Status) VALUES (?, ?, 'Owner', 'Approved')");
+            $stmt->bind_param("ii", $group_id, $new_owner_id);
+            if (!$stmt->execute()) {
+                throw new Exception("Error inserting new owner into GroupMembers: " . $stmt->error);
+            }
+        }
+        $stmt->close();
+
+        // Commit the transaction
+        $conn->commit();
+
+        // Redirect back to the admin page
         header("Location: admin.php");
         exit();
-    } else {
-        echo "Error: " . $stmt->error;
+    } catch (Exception $e) {
+        // Rollback the transaction on error
+        $conn->rollback();
+        echo "Transaction failed: " . $e->getMessage();
     }
-    $stmt->close();
 }
 
 // Fetch the existing group details
@@ -55,23 +106,23 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Group</title>
     <style>
-        body{
+        body {
             text-align: center;
         }
-        .form-group{
-            margin-top:10px;
+        .form-group {
+            margin-top: 10px;
             margin-bottom: 20px;
         }
-        form{
+        form {
             display: flex;
             flex-direction: column;
             text-align: left;
         }
-        button{
+        button {
             align-self: end;
         }
         input, textarea, select {
-            margin-top:10px;
+            margin-top: 10px;
         }
     </style>
 </head>
