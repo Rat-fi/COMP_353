@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['connection_id'])) {
     exit();
 }
 
-// Fetch connections
+// Fetch connections for Confirmed and Requested statuses
 $query = "
     SELECT 
         c.Relation, 
@@ -205,6 +205,7 @@ $query = "
     FROM Connections c
     JOIN Members m ON (m.MemberID = IF(c.MemberID1 = $user_id, c.MemberID2, c.MemberID1))
     WHERE (c.MemberID1 = $user_id OR c.MemberID2 = $user_id)
+    AND c.Status IN ('Requested', 'Confirmed')
     ORDER BY c.Relation, m.FirstName
 ";
 
@@ -218,6 +219,30 @@ $connections = [
 if ($result->num_rows > 0) {
     while ($row = $result->fetch_assoc()) {
         $connections[$row['Relation']][$row['Status']][] = $row;
+    }
+}
+
+// Fetch connections specifically for Blocked status
+$query = "
+    SELECT 
+        c.Relation, 
+        m.FirstName, 
+        m.LastName, 
+        m.Username, 
+        c.ConnectionID, 
+        c.Status,
+        c.MemberID1,
+        c.MemberID2
+    FROM Connections c
+    JOIN Members m ON m.MemberID = c.MemberID2
+    WHERE c.MemberID1 = $user_id AND c.Status = 'Blocked'
+    ORDER BY c.Relation, m.FirstName
+";
+
+$result = $conn->query($query);
+if ($result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $connections[$row['Relation']]['Blocked'][] = $row;
     }
 }
 
