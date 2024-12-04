@@ -31,7 +31,7 @@
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
             <div class="form-group">
-                <label for="reference_email">Reference Senior Email:</label>
+                <label for="reference_email">Reference Email (Senior or Admin):</label>
                 <input type="email" id="reference_email" name="reference_email" required>
             </div>
             <button type="submit" name="register">Register</button>
@@ -53,12 +53,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
     if ($password !== $confirm_password) {
         echo "<p style='color: red; text-align: center;'>Passwords do not match!</p>";
     } else {
-        // Check if the reference email belongs to an active senior member
-        $reference_query = "SELECT * FROM Members WHERE Email = '$reference_email' AND Privilege = 'Senior' AND Status = 'Active'";
+        // Check if the reference email belongs to an active Senior or Admin member
+        $reference_query = "SELECT * FROM Members WHERE Email = '$reference_email' AND (Privilege = 'Senior' OR Privilege = 'Administrator') AND Status = 'Active'";
         $reference_result = $conn->query($reference_query);
 
         if ($reference_result->num_rows === 0) {
-            echo "<p style='color: red; text-align: center;'>The reference email is not valid or does not belong to an active Senior member.</p>";
+            echo "<p style='color: red; text-align: center;'>The reference email is not valid or does not belong to an active Senior or Admin member.</p>";
         } else {
             // Hash the password
             $hashed_password = password_hash($password, PASSWORD_BCRYPT);
