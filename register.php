@@ -30,6 +30,10 @@
                 <label for="confirm_password">Confirm Password:</label>
                 <input type="password" id="confirm_password" name="confirm_password" required>
             </div>
+            <div class="form-group">
+                <label for="reference_email">Reference Senior Email:</label>
+                <input type="email" id="reference_email" name="reference_email" required>
+            </div>
             <button type="submit" name="register">Register</button>
         </form>
     </section>
@@ -43,19 +47,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
     $last_name = $conn->real_escape_string($_POST['last_name']);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
+    $reference_email = $conn->real_escape_string($_POST['reference_email']);
 
+    // Check if passwords match
     if ($password !== $confirm_password) {
-        echo "<p style='color: red;'>Passwords do not match!</p>";
+        echo "<p style='color: red; text-align: center;'>Passwords do not match!</p>";
     } else {
-        $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+        // Check if the reference email belongs to an active senior member
+        $reference_query = "SELECT * FROM Members WHERE Email = '$reference_email' AND Privilege = 'Senior' AND Status = 'Active'";
+        $reference_result = $conn->query($reference_query);
 
-        $query = "INSERT INTO Members (Username, Password, Email, FirstName, LastName, Privilege, Status, CreationDate) 
-                  VALUES ('$username', '$hashed_password', '$email', '$first_name', '$last_name', 'Junior', 'Active', NOW())";
-
-        if ($conn->query($query)) {
-            echo "<p style='color: green;'>Registration successful! <a href='login.php'>Login here</a>.</p>";
+        if ($reference_result->num_rows === 0) {
+            echo "<p style='color: red; text-align: center;'>The reference email is not valid or does not belong to an active Senior member.</p>";
         } else {
-            echo "<p style='color: red;'>Error: " . $conn->error . "</p>";
+            // Hash the password
+            $hashed_password = password_hash($password, PASSWORD_BCRYPT);
+
+            // Insert the new user into the database
+            $query = "INSERT INTO Members (Username, Password, Email, FirstName, LastName, Privilege, Status, CreationDate) 
+                      VALUES ('$username', '$hashed_password', '$email', '$first_name', '$last_name', 'Junior', 'Active', NOW())";
+
+            if ($conn->query($query)) {
+                echo "<p style='color: green; text-align: center;'>Registration successful! <a href='login.php'>Login here</a>.</p>";
+            } else {
+                echo "<p style='color: red;'>Error: " . $conn->error . "</p>";
+            }
         }
     }
 }
