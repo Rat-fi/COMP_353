@@ -14,6 +14,28 @@ if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator'
 // Fetch members and groups from the database
 $members_result = $conn->query("SELECT * FROM Members");
 $groups_result = $conn->query("SELECT * FROM UserGroups");
+
+// Fetch pending posts with joins for required fields
+$pending_posts_query = "
+    SELECT 
+        Posts.PostID, 
+        Members.Username AS AuthorUsername,
+        Posts.Visibility,
+        IF(Posts.Visibility = 'Group', UserGroups.GroupName, NULL) AS GroupName,
+        Posts.ContentText, 
+        Posts.CreationDate 
+    FROM 
+        Posts 
+    LEFT JOIN 
+        Members ON Posts.AuthorID = Members.MemberID 
+    LEFT JOIN 
+        UserGroups ON Posts.GroupID = UserGroups.GroupID 
+    WHERE 
+        Posts.ModerationStatus = 'Pending' 
+    ORDER BY 
+        Posts.CreationDate ASC";
+$pending_posts_result = $conn->query($pending_posts_query);
+
 $conn->close();
 ?>
 
@@ -26,8 +48,14 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Page</title>
     <style>
-        /* Basic styling for the page */
-        body {
+        /* Existing styles here */
+        /* Additional styling for Pending Posts cards */
+        .btn-success {
+            background-color: #5cb85c;
+            color: white;
+        }
+         /* Basic styling for the page */
+         body {
             font-family: Arial, sans-serif;
             background-color: #f8f9fa;
         }
@@ -110,9 +138,10 @@ $conn->close();
         <div class="tabs">
             <div class="tab-button active" data-target="#members">Members</div>
             <div class="tab-button" data-target="#groups">Groups</div>
+            <div class="tab-button" data-target="#pending-posts">Pending Posts</div>
         </div>
 
-        <!-- Tab content -->
+        <!-- Tab content for Members -->
         <div class="tab-content active" id="members">
             <button onclick="window.location.href='admin_add_member.php'" class="btn btn-primary">Add Member</button>
             <input type="text" id="search-member" placeholder="Search Members" class="form-control">
@@ -132,6 +161,7 @@ $conn->close();
             </div>
         </div>
 
+        <!-- Tab content for Groups -->
         <div class="tab-content" id="groups">
             <button onclick="window.location.href='admin_add_group.php'" class="btn btn-primary">Add Group</button>
             <input type="text" id="search-group" placeholder="Search Groups" class="form-control">
@@ -149,11 +179,36 @@ $conn->close();
                 <?php endwhile; ?>
             </div>
         </div>
+
+        <!-- Tab content for Pending Posts -->
+        <div class="tab-content" id="pending-posts">
+            <div id="pending-posts-list">
+                <?php while ($post = $pending_posts_result->fetch_assoc()): ?>
+                    <div class="card" id="post-<?php echo $post['PostID']; ?>">
+                        <div>
+                            <h5>Author: <?php echo $post['AuthorUsername']; ?></h5>
+                            <p>Visibility: 
+                                <?php echo $post['Visibility']; ?>
+                                <?php if ($post['Visibility'] === 'Group'): ?>
+                                    (<?php echo $post['GroupName']; ?>)
+                                <?php endif; ?>
+                            </p>
+                            <p>Content: <?php echo $post['ContentText']; ?></p>
+                            <p>Created On: <?php echo $post['CreationDate']; ?></p>
+                        </div>
+                        <div class="text-right">
+                            <button class="btn btn-success approve-post" data-id="<?php echo $post['PostID']; ?>">Approve</button>
+                            <button class="btn btn-danger reject-post" data-id="<?php echo $post['PostID']; ?>">Reject</button>
+                        </div>
+                    </div>
+                <?php endwhile; ?>
+            </div>
+        </div>
     </div>
 
     <script>
-        // Tab functionality
-        const tabs = document.querySelectorAll('.tab-button');
+// Tab functionality
+const tabs = document.querySelectorAll('.tab-button');
         const tabContents = document.querySelectorAll('.tab-content');
 
         // Tab switching logic
@@ -234,6 +289,42 @@ $conn->close();
                 } else {
                     card.style.display = 'flex';
                 }
+            });
+        });
+        
+        // AJAX for approving posts
+        document.querySelectorAll(".approve-post").forEach(button => {
+            button.addEventListener('click', function() {
+                var postId = this.getAttribute("data-id");
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "admin_moderate_post.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onload = function() {
+                    if (xhr.responseText === "success") {
+                        document.getElementById("post-" + postId).style.display = "none";
+                    } else {
+                        alert("Error approving post.");
+                    }
+                };
+                xhr.send("id=" + postId + "&action=approve");
+            });
+        });
+
+        // AJAX for rejecting posts
+        document.querySelectorAll(".reject-post").forEach(button => {
+            button.addEventListener('click', function() {
+                var postId = this.getAttribute("data-id");
+                var xhr = new XMLHttpRequest();
+                xhr.open("POST", "admin_moderate_post.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                xhr.onload = function() {
+                    if (xhr.responseText === "success") {
+                        document.getElementById("post-" + postId).style.display = "none";
+                    } else {
+                        alert("Error rejecting post.");
+                    }
+                };
+                xhr.send("id=" + postId + "&action=reject");
             });
         });
     </script>
