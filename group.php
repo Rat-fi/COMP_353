@@ -44,6 +44,45 @@ if ($group_result->num_rows === 0) {
 
 $group = $group_result->fetch_assoc();
 
+// Check if the user is a member of the group or an admin
+$query = "
+    SELECT 
+        Role 
+    FROM 
+        GroupMembers 
+    WHERE 
+        GroupID = ? AND MemberID = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("ii", $group_id, $user_id);
+$stmt->execute();
+$membership_result = $stmt->get_result();
+
+if ($membership_result->num_rows === 0) {
+    // Check if the user has administrator privileges
+    $query = "
+        SELECT 
+            Privilege 
+        FROM 
+            Members 
+        WHERE 
+            MemberID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $user_id);
+    $stmt->execute();
+    $admin_result = $stmt->get_result();
+
+    if ($admin_result->num_rows > 0) {
+        $admin = $admin_result->fetch_assoc();
+        if ($admin['Privilege'] !== 'Administrator') {
+            echo "You do not have permission to view this page.";
+            exit();
+        }
+    } else {
+        echo "You do not have permission to view this page.";
+        exit();
+    }
+}
+
 // Check if the user is the owner or admin
 $is_owner = $group['OwnerID'] == $user_id;
 

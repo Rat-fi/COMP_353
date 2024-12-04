@@ -10,6 +10,14 @@ if (!isset($_SESSION['user_id'])) {
 
 $user_id = $_SESSION['user_id'];
 
+// Fetch user privilege
+$query = "SELECT Privilege FROM Members WHERE MemberID = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$privilege_result = $stmt->get_result();
+$privilege = $privilege_result->fetch_assoc()['Privilege'] ?? null;
+
 // Handle join group request
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['group_id'])) {
     $group_id = intval($_POST['group_id']);
@@ -72,7 +80,12 @@ include('includes/header.php');
 ?>
 
 <main style="padding: 1rem; max-width: 900px; margin: auto;">
-    <h1>All Groups</h1>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1>All Groups</h1>
+        <?php if ($privilege === 'Senior' || $privilege === 'Administrator'): ?>
+            <button onclick="window.location.href='create_group.php'" class="link-button" style="font-size: 1rem;">Create Group</button>
+        <?php endif; ?>
+    </div>
 
     <?php if (isset($message)): ?>
         <p style="background: #f4f4f4; padding: 0.5rem; border: 1px solid #ddd; border-radius: 5px; color: green;">
@@ -85,9 +98,9 @@ include('includes/header.php');
             <ul style="list-style: none; padding: 0; margin: 0; overflow-y: auto; height: 65vh;">
                 <?php while ($group = $result->fetch_assoc()): ?>
                     <li style="border: 1px solid #ddd; border-radius: 5px; margin: 1rem; padding: 1rem; display: flex; justify-content: space-between; align-items: center;
-                        <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member'): ?>cursor: pointer; transition: background 0.3s, box-shadow 0.3s;<?php endif; ?>"
-                        <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member'): ?>onmouseover="this.style.backgroundColor='#f9f9f9'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.backgroundColor=''; this.style.boxShadow='';" <?php endif; ?>>
-                        <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member'): ?>
+                        <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member' || $privilege === 'Administrator'): ?>cursor: pointer; transition: background 0.3s, box-shadow 0.3s;<?php endif; ?>"
+                        <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member' || $privilege === 'Administrator'): ?>onmouseover="this.style.backgroundColor='#f9f9f9'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.backgroundColor=''; this.style.boxShadow='';" <?php endif; ?>>
+                        <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member' || $privilege === 'Administrator'): ?>
                             <div style="width: 80%; margin-right: 5%">
                                 <a href="group.php?group_id=<?php echo htmlspecialchars($group['GroupID']); ?>" style="text-decoration: none; color: inherit; flex-grow: 1;">
                                     <h3 style="margin: 0;"><?php echo htmlspecialchars($group['GroupName']); ?></h3>
@@ -110,7 +123,7 @@ include('includes/header.php');
                                 <p style="color: #ffc107; margin: 0;">Join request pending.</p>
                             <?php else: ?>
                                 <p style="color: grey; font-size: 0.85rem;">Owner: <?php echo htmlspecialchars($group['OwnerFirstName'] . ' ' . $group['OwnerLastName']); ?></p>
-                                <button onclick="requestToJoin(<?php echo htmlspecialchars($group['GroupID']); ?>)" style="padding: 0.5rem; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                                <button onclick="requestToJoin(<?php echo htmlspecialchars($group['GroupID']); ?>)" class="link-button">
                                     Request to Join
                                 </button>
                             <?php endif; ?>
@@ -122,7 +135,6 @@ include('includes/header.php');
             <p>No groups available at the moment.</p>
         <?php endif; ?>
     </div>
-
 </main>
 
 <script>

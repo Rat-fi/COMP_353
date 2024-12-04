@@ -58,7 +58,7 @@ include('includes/header.php');
 <main>
     <section class="edit-profile">
         <div class="back-button-container">
-            <a href="dashboard.php" class="link-button"><- Back to Dashboard</a>
+            <a href="dashboard.php" class="link-button"><arrow></arrow> Back</a>
         </div>
         <h1>Edit Your Profile</h1>
 
