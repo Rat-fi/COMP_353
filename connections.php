@@ -467,8 +467,9 @@ function displayConnections($connections, $type) {
         } elseif ($type === 'Blocked') {
             echo '<button class="unblock-connection-btn" style="background-color: orange;" onclick="unblockConnection(' . $connection['ConnectionID'] . ')">Unblock</button>';
         } elseif ($type === 'Friends' || $type === 'Family' || $type === 'Colleagues') {
-            echo '<button class="block-connection-btn" style="background-color: red;" onclick="blockConnection(' . $connection['ConnectionID'] . ')">Block</button>';
             echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ', \'' . htmlspecialchars($connection['Relation']) . '\')">Change Relation</button>';
+            echo '<button class="block-connection-btn" style="background-color: red; margin-left:10px" onclick="blockConnection(' . $connection['ConnectionID'] . ')">Block</button>';
+            
         }
 
         echo '</div></div>';
