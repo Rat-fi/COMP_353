@@ -469,7 +469,7 @@ function displayConnections($connections, $type) {
         } elseif ($type === 'Friends' || $type === 'Family' || $type === 'Colleagues') {
             echo '<button class="change-connection-btn" onclick="changeConnection(' . $connection['ConnectionID'] . ', \'' . htmlspecialchars($connection['Relation']) . '\')">Change Relation</button>';
             echo '<button class="block-connection-btn" style="background-color: red; margin-left:10px" onclick="blockConnection(' . $connection['ConnectionID'] . ')">Block</button>';
-            
+            echo '<button class="cancel-connection-btn" style="background-color: grey; margin-left:10px" onclick="cancelConnection(' . $connection['ConnectionID'] . ')">Remove</button>';
         }
 
         echo '</div></div>';
