@@ -23,6 +23,8 @@ $pending_posts_query = "
         Posts.Visibility,
         IF(Posts.Visibility = 'Group', UserGroups.GroupName, NULL) AS GroupName,
         Posts.ContentText, 
+        Posts.ContentType,
+        Posts.ContentLink, 
         Posts.CreationDate 
     FROM 
         Posts 
@@ -180,31 +182,45 @@ $conn->close();
             </div>
         </div>
 
-        <!-- Tab content for Pending Posts -->
-        <div class="tab-content" id="pending-posts">
-            <div id="pending-posts-list">
-                <?php while ($post = $pending_posts_result->fetch_assoc()): ?>
-                    <div class="card" id="post-<?php echo $post['PostID']; ?>">
-                        <div>
-                            <h5>Author: <?php echo $post['AuthorUsername']; ?></h5>
-                            <p><strong>Visibility: </strong>
-                                <?php echo $post['Visibility']; ?>
-                                <?php if ($post['Visibility'] === 'Group'): ?>
-                                    (<?php echo $post['GroupName']; ?>)
-                                <?php endif; ?>
-                            </p>
-                            <p><strong>Content:</strong> <?php echo $post['ContentText']; ?></p>
-                            <p><strong>Created On:</strong> <?php echo $post['CreationDate']; ?></p>
-                        </div>
-                        <div class="text-right">
-                            <button class="btn btn-success approve-post" data-id="<?php echo $post['PostID']; ?>">Approve</button>
-                            <button class="btn btn-danger reject-post" data-id="<?php echo $post['PostID']; ?>">Reject</button>
-                        </div>
+      <!-- Tab content for Pending Posts -->
+<div class="tab-content" id="pending-posts">
+    <div id="pending-posts-list">
+        <?php while ($post = $pending_posts_result->fetch_assoc()): ?>
+            <div class="card" id="post-<?php echo $post['PostID']; ?>">
+                <div>
+                    <h5>Author: <?php echo htmlspecialchars($post['AuthorUsername']); ?></h5>
+                    <p><strong>Visibility: </strong>
+                        <?php echo htmlspecialchars($post['Visibility']); ?>
+                        <?php if ($post['Visibility'] === 'Group'): ?>
+                            (<?php echo htmlspecialchars($post['GroupName']); ?>)
+                        <?php endif; ?>
+                    </p>
+                    <p><strong>Content:</strong> <?php echo nl2br(htmlspecialchars($post['ContentText'])); ?></p>
+                    
+                    <div style="margin: 1rem 0;">
+                        <?php
+                        if ($post['ContentType'] === 'Image' && !empty($post['ContentLink'])) {
+                            echo "<p><strong>Media:</strong></p>";
+                            echo "<img src='" . htmlspecialchars($post['ContentLink']) . "' alt='Post Image' style='max-width: 300px; margin-top: 1rem; border-radius: 5px;'/>";
+                        } elseif ($post['ContentType'] === 'Video' && !empty($post['ContentLink'])) {
+                            echo "<p><strong>Media:</strong></p>";
+                            echo "<video controls style='max-width: 100%; margin-top: 1rem; border-radius: 5px;'><source src='" . htmlspecialchars($post['ContentLink']) . "' type='video/mp4'>Your browser does not support the video tag.</video>";
+                        }
+                        ?>
                     </div>
-                <?php endwhile; ?>
+                    
+                    <p><strong>Created On:</strong> <?php echo htmlspecialchars($post['CreationDate']); ?></p>
+                </div>
+                <div class="text-right">
+                    <button class="btn btn-success approve-post" data-id="<?php echo $post['PostID']; ?>">Approve</button>
+                    <button class="btn btn-danger reject-post" data-id="<?php echo $post['PostID']; ?>">Reject</button>
+                </div>
             </div>
-        </div>
+        <?php endwhile; ?>
     </div>
+</div>
+
+</div>
 
     <script>
 // Tab functionality
