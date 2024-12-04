@@ -187,14 +187,14 @@ $conn->close();
                     <div class="card" id="post-<?php echo $post['PostID']; ?>">
                         <div>
                             <h5>Author: <?php echo $post['AuthorUsername']; ?></h5>
-                            <p>Visibility: 
+                            <p><strong>Visibility: </strong>
                                 <?php echo $post['Visibility']; ?>
                                 <?php if ($post['Visibility'] === 'Group'): ?>
                                     (<?php echo $post['GroupName']; ?>)
                                 <?php endif; ?>
                             </p>
-                            <p>Content: <?php echo $post['ContentText']; ?></p>
-                            <p>Created On: <?php echo $post['CreationDate']; ?></p>
+                            <p><strong>Content:</strong> <?php echo $post['ContentText']; ?></p>
+                            <p><strong>Created On:</strong> <?php echo $post['CreationDate']; ?></p>
                         </div>
                         <div class="text-right">
                             <button class="btn btn-success approve-post" data-id="<?php echo $post['PostID']; ?>">Approve</button>
