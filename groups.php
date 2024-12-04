@@ -82,27 +82,26 @@ include('includes/header.php');
 
     <div style="background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 1rem;">
         <?php if ($result->num_rows > 0): ?>
-            <ul style="list-style: none; padding: 0; margin: 0;">
+            <ul style="list-style: none; padding: 0; margin: 0; overflow-y: auto; height: 65vh;">
                 <?php while ($group = $result->fetch_assoc()): ?>
-                    <li style="border-bottom: 1px solid #ddd; padding: 1rem; display: flex; justify-content: space-between; align-items: center; <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member'): ?>cursor: pointer; transition: background-color 0.3s, box-shadow 0.3s;<?php endif; ?>"
+                    <li style="border: 1px solid #ddd; border-radius: 5px; margin: 1rem; padding: 1rem; display: flex; justify-content: space-between; align-items: center;
+                        <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member'): ?>cursor: pointer; transition: background 0.3s, box-shadow 0.3s;<?php endif; ?>"
                         <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member'): ?>onmouseover="this.style.backgroundColor='#f9f9f9'; this.style.boxShadow='0 2px 5px rgba(0, 0, 0, 0.1)';" onmouseout="this.style.backgroundColor=''; this.style.boxShadow='';" <?php endif; ?>>
                         <?php if ($group['MembershipStatus'] === 'Owner' || $group['MembershipStatus'] === 'Member'): ?>
-                            <a href="group.php?group_id=<?php echo htmlspecialchars($group['GroupID']); ?>" style="text-decoration: none; color: inherit; flex-grow: 1;">
-                                <div>
+                            <div style="width: 80%; margin-right: 5%">
+                                <a href="group.php?group_id=<?php echo htmlspecialchars($group['GroupID']); ?>" style="text-decoration: none; color: inherit; flex-grow: 1;">
                                     <h3 style="margin: 0;"><?php echo htmlspecialchars($group['GroupName']); ?></h3>
                                     <p style="margin: 0.5rem 0;"><?php echo htmlspecialchars($group['Description']); ?></p>
-                                    <p style="color: grey; font-size: 0.85rem;">Owner: <?php echo htmlspecialchars($group['OwnerFirstName'] . ' ' . $group['OwnerLastName']); ?></p>
-                                </div>
-                            </a>
+                                </a>
+                            </div>
                         <?php else: ?>
-                            <div>
+                            <div style="width: 80%; margin-right: 5%">
                                 <h3 style="margin: 0;"><?php echo htmlspecialchars($group['GroupName']); ?></h3>
                                 <p style="margin: 0.5rem 0;"><?php echo htmlspecialchars($group['Description']); ?></p>
-                                <p style="color: grey; font-size: 0.85rem;">Owner: <?php echo htmlspecialchars($group['OwnerFirstName'] . ' ' . $group['OwnerLastName']); ?></p>
                             </div>
                         <?php endif; ?>
 
-                        <div>
+                        <div style="width: 20%;">
                             <?php if ($group['MembershipStatus'] === 'Owner'): ?>
                                 <p style="color: #28a745; margin: 0;">You are the owner.</p>
                             <?php elseif ($group['MembershipStatus'] === 'Member'): ?>
@@ -110,6 +109,7 @@ include('includes/header.php');
                             <?php elseif ($group['MembershipStatus'] === 'Pending'): ?>
                                 <p style="color: #ffc107; margin: 0;">Join request pending.</p>
                             <?php else: ?>
+                                <p style="color: grey; font-size: 0.85rem;">Owner: <?php echo htmlspecialchars($group['OwnerFirstName'] . ' ' . $group['OwnerLastName']); ?></p>
                                 <button onclick="requestToJoin(<?php echo htmlspecialchars($group['GroupID']); ?>)" style="padding: 0.5rem; background: #007BFF; color: white; border: none; border-radius: 5px; cursor: pointer;">
                                     Request to Join
                                 </button>

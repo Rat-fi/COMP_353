@@ -129,73 +129,92 @@ include('includes/header.php');
         <p><?php echo htmlspecialchars($group['Description']); ?></p>
     </section>
 
-    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2rem;">
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem;">
         <!-- Latest Posts -->
         <section style="background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 1rem;">
             <div style="display: flex; justify-content: space-between;">
                 <h2>Latest Posts</h2>
-                <button onclick="window.location.href='create_post.php?group_id=<?php echo $group_id; ?>'" style="margin-bottom: 1rem; padding: 0.5rem; background: #212e54; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                    Create Post
-                </button>
+                <div>
+                    <button style="padding: 0.5rem; font-size: 0.9rem; cursor: pointer;"
+                        onclick="window.location.href='create_post.php?group_id=<?php echo $group_id; ?>'">Create Post</button>
+                </div>
             </div>
-            <?php if ($posts_result->num_rows > 0): ?>
-                <div style="margin-top: 1rem;">
+            <div style="height: 700px; overflow-y: auto;">
+                <?php if ($posts_result->num_rows > 0): ?>
                     <?php while ($post = $posts_result->fetch_assoc()): ?>
-                        <a href="post.php?post_id=<?php echo htmlspecialchars($post['PostID']); ?>" style="text-decoration: none; color: inherit;">
-                            <div style="padding: 0.5rem; border-bottom: 1px solid #ddd; cursor: pointer;">
-                                <p><strong><?php echo htmlspecialchars($post['FirstName'] . ' ' . $post['LastName']); ?></strong>
-                                    <span style="color: grey; font-size: 0.85rem;">(<?php echo htmlspecialchars($post['CreationDate']); ?>)</span>
-                                </p>
+                        <a href="post.php?post_id=<?php echo htmlspecialchars($post['PostID']); ?>"
+                            style="text-decoration: none; color: inherit; display: block; margin-bottom: 1rem;">
+                            <div style="background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; padding: 1rem;">
+                                <p><strong><?php echo htmlspecialchars($post['FirstName'] . ' ' . $post['LastName']); ?></strong></p>
                                 <p><?php echo htmlspecialchars($post['ContentText']); ?></p>
+                                <?php if (!empty($post['ContentLink']) && in_array($post['ContentType'], ['Image', 'Video'])): ?>
+                                    <?php if ($post['ContentType'] === 'Image'): ?>
+                                        <img src="<?php echo htmlspecialchars($post['ContentLink']); ?>"
+                                            alt="Post Image" style="max-width: 100%; border-radius: 5px;">
+                                    <?php elseif ($post['ContentType'] === 'Video'): ?>
+                                        <video controls style="max-width: 100%; border-radius: 5px;">
+                                            <source src="<?php echo htmlspecialchars($post['ContentLink']); ?>" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    <?php endif; ?>
+                                <?php endif; ?>
+                                <p style="font-size: 0.85rem; color: #777;">Posted on: <?php echo htmlspecialchars($post['CreationDate']); ?></p>
                             </div>
                         </a>
                     <?php endwhile; ?>
-                </div>
-            <?php else: ?>
-                <p>No posts available in this group.</p>
-            <?php endif; ?>
+                <?php else: ?>
+                    <p style="font-size: 0.85rem;">No posts available.</p>
+                <?php endif; ?>
+            </div>
         </section>
 
-        <!-- Members List -->
-        <section style="background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 1rem;">
-            <h2>Members</h2>
-            <?php if ($members_result->num_rows > 0): ?>
-                <ul style="list-style-type: none; padding: 0;">
-                    <?php while ($member = $members_result->fetch_assoc()): ?>
-                        <li style="margin-bottom: 1rem; padding: 0.5rem; border-bottom: 1px solid #ddd;">
-                            <strong><?php echo htmlspecialchars($member['FirstName'] . ' ' . $member['LastName']); ?></strong>
-                            <span style="color: grey;">(<?php echo htmlspecialchars($member['Username']); ?>)</span>
-                            <br>
-                            <span style="font-size: 0.85rem; color: #777;">
-                                <?php echo htmlspecialchars($member['Role']); ?> - <?php echo htmlspecialchars($member['Status']); ?>
-                            </span>
-                            <?php if ($is_owner): ?>
-                                <div style="margin-left: 1rem;">
-                                    <?php if ($member['Status'] === 'Pending'): ?>
-                                        <button onclick="handleMemberAction(<?php echo $member['MemberID']; ?>, 'accept')" style="color: green; border: none; background: none; cursor: pointer;">Accept</button>
-                                        <button onclick="handleMemberAction(<?php echo $member['MemberID']; ?>, 'reject')" style="color: red; border: none; background: none; cursor: pointer;">Reject</button>
-                                    <?php elseif ($member['Status'] === 'Approved'): ?>
-                                        <button onclick="handleMemberAction(<?php echo $member['MemberID']; ?>, 'remove')" style="color: red; border: none; background: none; cursor: pointer;">Remove</button>
-                                    <?php endif; ?>
+
+        <!-- Members and Events List -->
+        <section>
+            <section style="background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 1rem;">
+                <h2>Members</h2>
+                <?php if ($members_result->num_rows > 0): ?>
+                    <ul style="height: 300px; overflow-y: auto; list-style-type: none; padding: 0;">
+                        <?php while ($member = $members_result->fetch_assoc()): ?>
+                            <li style="display: flex; justify-content: space-between; align-items: center; padding: 0.5rem; border-bottom: 1px solid #ddd;">
+                                <div>
+                                    <strong><?php echo htmlspecialchars($member['FirstName'] . ' ' . $member['LastName']); ?></strong>
+                                    <br>
+                                    <span style="color: grey;">(<?php echo htmlspecialchars($member['Username']); ?>)</span>
+                                    <br>
+                                    <span style="font-size: 0.85rem; color: #777;">
+                                        <?php echo htmlspecialchars($member['Role']); ?> - <?php echo htmlspecialchars($member['Status']); ?>
+                                    </span>
                                 </div>
-                            <?php endif; ?>
-                        </li>
-                    <?php endwhile; ?>
-                </ul>
-            <?php else: ?>
-                <p>No members in this group.</p>
-            <?php endif; ?>
-        </section>
-
-        <!-- Events Section -->
-        <section style="background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 1rem;">
-            <h2>Upcoming Events</h2>
-            <button onclick="window.location.href='create_event.php?group_id=<?php echo $group_id; ?>'" style="margin-bottom: 1rem; padding: 0.5rem; background: #212e54; color: white; border: none; border-radius: 5px; cursor: pointer;">
-                Create Event
-            </button>
-            <?php
-            // Fetch upcoming events for the group
-            $query = "
+                                <?php if ($is_owner): ?>
+                                    <div style="margin-left: 1rem;">
+                                        <?php if ($member['Status'] === 'Pending'): ?>
+                                            <button class="link-button" onclick="handleMemberAction(<?php echo $member['MemberID']; ?>, 'accept')" style="color: white; background: green;">Accept</button>
+                                            <button class="link-button" onclick="handleMemberAction(<?php echo $member['MemberID']; ?>, 'reject')" style="color: white; background: red;">Reject</button>
+                                        <?php elseif ($member['Status'] === 'Approved'): ?>
+                                            <button class="link-button" onclick="handleMemberAction(<?php echo $member['MemberID']; ?>, 'remove')" style="color: white; background: red;">Remove</button>
+                                        <?php endif; ?>
+                                    </div>
+                                <?php endif; ?>
+                            </li>
+                        <?php endwhile; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>No members in this group.</p>
+                <?php endif; ?>
+            </section>
+            <section style="background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 1rem; margin-top: 1rem">
+                <div style="display: flex; justify-content: space-between;">
+                    <h2>Upcoming Events</h2>
+                    <div>
+                        <button class="link-button" onclick="window.location.href='create_event.php?group_id=<?php echo $group_id; ?>'">
+                            Create Event
+                        </button>
+                    </div>
+                </div>
+                <?php
+                // Fetch upcoming events for the group
+                $query = "
                 SELECT 
                     EventID, 
                     EventName, 
@@ -209,34 +228,36 @@ include('includes/header.php');
                     GroupID = ? AND Status = 'Scheduled'
                 ORDER BY 
                     EventDate ASC";
-            $stmt = $conn->prepare($query);
+                $stmt = $conn->prepare($query);
 
-            if ($stmt) {
-                $stmt->bind_param("i", $group_id);
-                $stmt->execute();
-                $events_result = $stmt->get_result();
-            } else {
-                die("Error preparing events query: " . $conn->error);
-            }
-            if ($events_result->num_rows > 0): ?>
-                <ul style="list-style-type: none; padding: 0;">
-                    <?php while ($event = $events_result->fetch_assoc()): ?>
-                        <a href="event.php?event_id=<?php echo htmlspecialchars($event['EventID']); ?>" style="text-decoration: none; color: inherit;">
-                            <li style="margin-bottom: 1rem; padding: 0.5rem; border-bottom: 1px solid #ddd; cursor: pointer;">
-                                <strong><?php echo htmlspecialchars($event['EventName']); ?></strong>
-                                <p style="margin: 0.5rem 0;"><?php echo htmlspecialchars($event['Description']); ?></p>
-                                <p style="font-size: 0.85rem; color: grey;">
-                                    <strong>Date:</strong> <?php echo htmlspecialchars($event['EventDate']); ?><br>
-                                    <strong>Location:</strong> <?php echo htmlspecialchars($event['Location']); ?>
-                                </p>
-                            </li>
-                        </a>
-                    <?php endwhile; ?>
-                </ul>
-            <?php else: ?>
-                <p>No upcoming events scheduled for this group.</p>
-            <?php endif; ?>
+                if ($stmt) {
+                    $stmt->bind_param("i", $group_id);
+                    $stmt->execute();
+                    $events_result = $stmt->get_result();
+                } else {
+                    die("Error preparing events query: " . $conn->error);
+                }
+                if ($events_result->num_rows > 0): ?>
+                    <ul style="height: 200px; overflow-y: auto; list-style-type: none; padding: 0; ">
+                        <?php while ($event = $events_result->fetch_assoc()): ?>
+                            <a href="event.php?event_id=<?php echo htmlspecialchars($event['EventID']); ?>" style="text-decoration: none; color: inherit;">
+                                <li style="margin-bottom: 1rem; padding: 0.5rem; border-bottom: 1px solid #ddd; cursor: pointer;">
+                                    <strong><?php echo htmlspecialchars($event['EventName']); ?></strong>
+                                    <p style="margin: 0.5rem 0;"><?php echo htmlspecialchars($event['Description']); ?></p>
+                                    <p style="font-size: 0.85rem; color: grey;">
+                                        <strong>Date:</strong> <?php echo htmlspecialchars($event['EventDate']); ?><br>
+                                        <strong>Location:</strong> <?php echo htmlspecialchars($event['Location']); ?>
+                                    </p>
+                                </li>
+                            </a>
+                        <?php endwhile; ?>
+                    </ul>
+                <?php else: ?>
+                    <p>No upcoming events scheduled for this group.</p>
+                <?php endif; ?>
+            </section>
         </section>
+
     </div>
 </main>
 
@@ -247,12 +268,12 @@ include('includes/header.php');
         formData.append('action', action);
 
         fetch(window.location.href, {
-            method: 'POST',
-            body: formData
-        }).then(response => response.text())
-          .then(() => {
-              location.reload(); // Reload the page to reflect the changes
-          });
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+            .then(() => {
+                location.reload(); // Reload the page to reflect the changes
+            });
     }
 </script>
 

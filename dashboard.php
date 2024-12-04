@@ -59,7 +59,10 @@ $_SESSION['LAST_ACTIVITY'] = time();
         <section style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
             <!-- Latest Messages -->
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
-                <p>Latest Messages</p>
+                <div style="display: flex; position: relative; justify-content: center; align-items: center;">
+                    <p>Latest Messages</p>
+                    <a href="chat_list.php" style="position: absolute; right: 0; align-content: center;" class="link-button">messages</a>
+                </div>
                 <div style="height: 500px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
                     // Fetch the latest messages for the current user
@@ -164,7 +167,10 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
             <!-- Groups Section -->
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
-                <p>Groups</p>
+                <div style="display: flex; position: relative; justify-content: center;  align-items: center;">
+                    <p>My Groups</p>
+                    <a href="groups.php" style="position: absolute; right: 0; align-content: center;" class="link-button">manage</a>
+                </div>
                 <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
                     // Fetch groups the user is part of
@@ -199,7 +205,10 @@ $_SESSION['LAST_ACTIVITY'] = time();
                     }
                     ?>
                 </div>
-                <p>Latest Friend Requests</p>
+                <div style="display: flex; position: relative; padding-top: 0.5rem; justify-content: center; align-items: center;">
+                    <p>Latest Friend Requests</p>
+                    <a href="connections.php" style="position: absolute; right: 0; align-content: center;" class="link-button">manage</a>
+                </div>
                 <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
                     // Fetch latest friend requests for the current user
