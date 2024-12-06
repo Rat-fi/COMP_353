@@ -50,7 +50,7 @@ $result = $conn->query($query);
         <h1>Add a Connection</h1>
 
         <!-- Search form -->
-        <form method="GET" action="add_Connection.php" style="margin-bottom: 20px;">
+        <form method="GET" action="add_connection.php" style="margin-bottom: 20px;">
             <input type="text" name="search" placeholder="Search members by name or username..." value="<?php echo htmlspecialchars($search_query); ?>">
             <button type="submit">Search</button>
         </form>
@@ -64,7 +64,7 @@ $result = $conn->query($query);
                             <h2 style="margin: 0; font-size: 1.2em; font-weight: bold; color: black;"><?php echo htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']); ?></h2>
                             <p style="margin: 0; color: gray;"><?php echo htmlspecialchars($row['Username']); ?></p>
                         </div>
-                        <form method="POST" action="add_Connection.php" style="margin:0px; padding:0px">
+                        <form method="POST" action="add_connection.php" style="margin:0px; padding:0px">
                             <input type="hidden" name="connect_member_id" value="<?php echo $row['MemberID']; ?>">
                             <button type="submit" style="margin:0px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;">
                                 Connect
