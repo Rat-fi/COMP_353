@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Check if the user is an Administrator
 if ($_SESSION['privilege'] !== 'Administrator') {

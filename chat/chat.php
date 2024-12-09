@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect to login if user is not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login.php");
     exit();
 }
 
@@ -54,7 +54,7 @@ $query_messages = "
 $result_messages = $conn->query($query_messages);
 ?>
 
-<?php include('includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 
 <main>
     <h1>Chat with <?php echo htmlspecialchars($other_member['FirstName'] . ' ' . $other_member['LastName']); ?></h1>
@@ -76,4 +76,4 @@ $result_messages = $conn->query($query_messages);
     </section>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

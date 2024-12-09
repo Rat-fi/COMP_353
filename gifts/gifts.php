@@ -1,11 +1,11 @@
 <?php
 // Start session and include the configuration file
 session_start();
-include('config.php'); 
+include('../config.php'); 
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login.php");
     exit();
 }
 
@@ -171,7 +171,7 @@ $receivedGiftsResult = mysqli_query($conn, $receivedGiftsQuery);
 </head>
 <body>
 
-<?php include('./includes/header.php'); ?> <!-- Include your header for navigation -->
+<?php include('../includes/header.php'); ?> <!-- Include your header for navigation -->
 <div style="text-align:center">
     <h2>Gifts Exchange</h2>
 </div>
@@ -244,4 +244,4 @@ function getReceivedGiftButtons($giftId, $status) {
 
 </body>
 </html>
-<?php include('./includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

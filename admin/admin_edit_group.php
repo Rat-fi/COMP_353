@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Check if the user is an Administrator
 if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator') {
@@ -98,7 +98,7 @@ $stmt->close();
 
 $conn->close();
 ?>
-<?php include('includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -154,4 +154,4 @@ $conn->close();
     </div>
 </body>
 </html>
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

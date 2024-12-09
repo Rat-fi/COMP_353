@@ -1,7 +1,7 @@
 <?php
 // Start the session and include the database connection
 session_start();
-include('config.php');
+include('../config.php');
 
 // Ensure the giftId and status are passed in the POST request
 if (isset($_POST['giftId']) && isset($_POST['status'])) {
