@@ -15,14 +15,16 @@ $user_id = $_SESSION['user_id']; // This should come from the login process
 $sentGiftsQuery = "SELECT g.GiftsId, g.GiftName, g.ImageLink, g.Timestamp, r.FirstName AS ReceiverFirstName, r.LastName AS ReceiverLastName, g.Status
                    FROM Gifts g
                    JOIN Members r ON g.ReceiverID = r.MemberID
-                   WHERE g.SenderID = $user_id";
+                   WHERE g.SenderID = $user_id
+                   ORDER BY g.Timestamp DESC";
 $sentGiftsResult = mysqli_query($conn, $sentGiftsQuery);
 
 // Fetch Received Gifts
 $receivedGiftsQuery = "SELECT g.GiftsId, g.GiftName, g.ImageLink, g.Status, g.Timestamp, s.FirstName AS SenderFirstName, s.LastName AS SenderLastName
                        FROM Gifts g
                        JOIN Members s ON g.SenderID = s.MemberID
-                       WHERE g.ReceiverID = $user_id";
+                       WHERE g.ReceiverID = $user_id
+                       ORDER BY g.Timestamp DESC";
 $receivedGiftsResult = mysqli_query($conn, $receivedGiftsQuery);
 
 ?>
@@ -130,6 +132,7 @@ $receivedGiftsResult = mysqli_query($conn, $receivedGiftsQuery);
         }
     </style>
     <script>
+        // Function to show the correct tab
         function showTab(tabName) {
             var tabs = document.querySelectorAll('.tab-content');
             var buttons = document.querySelectorAll('.tab-button');
@@ -142,11 +145,24 @@ $receivedGiftsResult = mysqli_query($conn, $receivedGiftsQuery);
 
             document.getElementById(tabName).classList.add('active');
             document.querySelector('#' + tabName + 'Tab').classList.add('active');
+
+            // Save the active tab to localStorage
+            localStorage.setItem('activeTab', tabName);
         }
+
+        // On page load, check for the stored tab state and show the active tab
+        window.onload = function() {
+            var activeTab = localStorage.getItem('activeTab');
+            if (activeTab) {
+                showTab(activeTab); // Show the tab that was previously active
+            } else {
+                showTab('sent'); // Default to Sent Gifts if no tab is saved
+            }
+        };
 
         function updateGiftStatus(giftId, status) {
             var xhr = new XMLHttpRequest();
-            xhr.open("POST", "updateGiftStatus.php", true);
+            xhr.open("POST", "gifts_update_status.php", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onload = function() {
                 if (xhr.status === 200) {
@@ -222,11 +238,7 @@ function getReceivedGiftButtons($giftId, $status) {
             <button class="reject-btn" onclick="updateGiftStatus(' . $giftId . ', \'Rejected\')">Reject</button>';
     } elseif ($status === 'Approved') {
         return '<button class="open-btn" onclick="updateGiftStatus(' . $giftId . ', \'Opened\')">Open</button>';
-    } elseif ($status === 'Rejected') {
-        return '<p class="status">Status: Rejected</p>';
-    } elseif ($status === 'Opened') {
-        return '<p class="status">Status: Opened</p>';
-    }
+    } 
 }
 ?>
 
