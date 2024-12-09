@@ -26,7 +26,6 @@ $receivedGiftsQuery = "SELECT g.GiftsId, g.GiftName, g.ImageLink, g.Status, g.Ti
                        WHERE g.ReceiverID = $user_id
                        ORDER BY g.Timestamp DESC";
 $receivedGiftsResult = mysqli_query($conn, $receivedGiftsQuery);
-
 ?>
 
 <!DOCTYPE html>
@@ -125,11 +124,7 @@ $receivedGiftsResult = mysqli_query($conn, $receivedGiftsQuery);
         .tab-content.active {
             display: block;
             padding-left: 20px;
-        }
-
-        .gift-card .status {
-            font-weight: bold;
-        }
+        }    
     </style>
     <script>
         // Function to show the correct tab
@@ -180,10 +175,14 @@ $receivedGiftsResult = mysqli_query($conn, $receivedGiftsQuery);
 <div style="text-align:center">
     <h2>Gifts Exchange</h2>
 </div>
-<div class="tabs" style="justify-content: center;">
-    <button class="tab-button active" id="sentTab" onclick="showTab('sent')">Sent Gifts</button>
-    <button class="tab-button" id="receivedTab" onclick="showTab('received')">Received Gifts</button>
-</div>
+    <div class="tabs" style="justify-content: space-between; padding:0 20px 0 20px">
+        <div>
+            <button class="tab-button active" id="sentTab" onclick="showTab('sent')">Sent Gifts</button>
+            <button class="tab-button" id="receivedTab" onclick="showTab('received')">Received Gifts</button>
+        </div>
+        <button class="tab-button"  onclick="window.location.href='gift_send.php';">Send Gift</button>
+    </div>
+
 
 <div id="sent" class="tab-content active">
     <h2>Sent Gifts</h2>
@@ -241,6 +240,7 @@ function getReceivedGiftButtons($giftId, $status) {
     } 
 }
 ?>
+
 
 </body>
 </html>

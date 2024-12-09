@@ -40,6 +40,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     <?php if (isset($_SESSION['privilege']) && $_SESSION['privilege'] === 'Administrator'): ?>
                         <li><a href="admin.php" class="link-button">Admin</a></li>
                     <?php endif; ?>
+                    <li><a href="gifts.php" class="link-button">Gifts</a></li>
                     <li><a href="logout.php" class="link-button">Logout</a></li>
                 <?php else: ?>
                     <li><a href="register.php" class="link-button">Register</a></li>
