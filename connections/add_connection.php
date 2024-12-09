@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect if user is not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login.php");
     exit();
 }
 
@@ -43,7 +43,7 @@ $query = "
 $result = $conn->query($query);
 ?>
 
-<?php include('includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 
 <main>
     <section class="form-section">
@@ -79,5 +79,5 @@ $result = $conn->query($query);
     </section>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>
 

@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login.php");
     exit();
 }
 
@@ -246,7 +246,7 @@ if ($result->num_rows > 0) {
     }
 }
 
-include('includes/header.php');
+include('../includes/header.php');
 ?>
 
 <main>
@@ -297,7 +297,7 @@ include('includes/header.php');
     </section>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>
 
 <script>
 function showTab(tabName) {

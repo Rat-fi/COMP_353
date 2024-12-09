@@ -1,11 +1,11 @@
 <?php
 // Start session and include the configuration file
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: /login.php");
     exit();
 }
 
@@ -121,7 +121,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sendGift'])) {
 </head>
 <body>
 
-<?php include('./includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 
 <div style="text-align:center">
     <h2>Send a Gift</h2>
@@ -161,4 +161,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['sendGift'])) {
 </body>
 </html>
 
-<?php include('./includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>
