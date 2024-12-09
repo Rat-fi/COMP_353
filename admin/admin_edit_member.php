@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator') {
     echo "<div style='display: flex; justify-content: center; align-items: center; height: 100vh;'>
@@ -38,7 +38,7 @@ $member = $result->fetch_assoc();
 $conn->close();
 ?>
 
-<?php include('includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -105,4 +105,4 @@ $conn->close();
 </body>
 </html>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

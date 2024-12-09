@@ -61,7 +61,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 <div style="display: flex; position: relative; justify-content: center; align-items: center;">
                     <p>Latest Messages</p>
-                    <a href="chat_list.php" style="position: absolute; right: 0; align-content: center;" class="link-button">messages</a>
+                    <a href="./chat/chat_list.php" style="position: absolute; right: 0; align-content: center;" class="link-button">messages</a>
                 </div>
                 <div style="height: 500px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
@@ -85,7 +85,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
                     if ($result->num_rows > 0) {
                         while ($message = $result->fetch_assoc()) {
-                            echo "<a href='chat.php?member_id=" . htmlspecialchars($message['SenderID']) . "' 
+                            echo "<a href='./chat/chat.php?member_id=" . htmlspecialchars($message['SenderID']) . "' 
                                 style='text-decoration: none; color: inherit; width: 100%;'>
                                 <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
                                     <p><strong>" . htmlspecialchars($message['SenderName']) . ":</strong> " . htmlspecialchars($message['Content']) . "</p>
@@ -207,7 +207,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
                 </div>
                 <div style="display: flex; position: relative; padding-top: 0.5rem; justify-content: center; align-items: center;">
                     <p>Latest Friend Requests</p>
-                    <a href="connections.php" style="position: absolute; right: 0; align-content: center;" class="link-button">manage</a>
+                    <a href="./connections/connections.php" style="position: absolute; right: 0; align-content: center;" class="link-button">manage</a>
                 </div>
                 <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
@@ -232,7 +232,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
                     if ($result->num_rows > 0) {
                         while ($request = $result->fetch_assoc()) {
-                            echo "<a href='connections.php' 
+                            echo "<a href='./connections/connections.php' 
                                 style='text-decoration: none; color: inherit; width: 100%;'>
                                 <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
                                     <p><strong>" . htmlspecialchars($request['FirstName']) . " " . htmlspecialchars($request['LastName']) . "</strong> - " . htmlspecialchars($request['Username']) . "</p>

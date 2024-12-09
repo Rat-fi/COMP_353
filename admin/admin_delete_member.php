@@ -1,11 +1,11 @@
 <?php
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $group_id = $_POST['id'];
+    $member_id = $_POST['id'];
 
-    include('config.php');
+    include('../config.php');
 
-    $stmt = $conn->prepare("DELETE FROM UserGroups WHERE GroupID = ?");
-    $stmt->bind_param("i", $group_id);
+    $stmt = $conn->prepare("DELETE FROM Members WHERE MemberID = ?");
+    $stmt->bind_param("i", $member_id);
 
     if ($stmt->execute()) {
         echo "success";

@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);  // Hashing the password
     $privilege = $_POST['privilege'];
 
-    include('config.php');
+    include('../config.php');
     
     $stmt = $conn->prepare("INSERT INTO Members (Username, Password, Email, FirstName, LastName, Privilege) VALUES (?, ?, ?, ?, ?, ?)");
     $stmt->bind_param("ssssss", $username, $password, $email, $first_name, $last_name, $privilege);
@@ -30,7 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $conn->close();
 }
 ?>
-<?php include('includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -98,4 +98,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
 </body>
 </html>
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

@@ -1,7 +1,7 @@
 <?php
 session_start();
 
-include('config.php');
+include('../config.php');
 
 // Check if the user has Administrator privilege
 if (!isset($_SESSION['privilege']) || $_SESSION['privilege'] !== 'Administrator') {
@@ -41,7 +41,7 @@ $pending_posts_result = $conn->query($pending_posts_query);
 $conn->close();
 ?>
 
-<?php include('includes/header.php'); ?>
+<?php include('../includes/header.php'); ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -165,7 +165,7 @@ $conn->close();
 
         <!-- Tab content for Groups -->
         <div class="tab-content" id="groups">
-            <button onclick="window.location.href='create_group.php'" class="btn btn-primary">Add Group</button>
+            <button onclick="window.location.href='../create_group.php'" class="btn btn-primary">Add Group</button>
             <input type="text" id="search-group" placeholder="Search Groups" class="form-control">
             <div id="groups-list">
                 <?php while ($group = $groups_result->fetch_assoc()): ?>
@@ -347,4 +347,4 @@ const tabs = document.querySelectorAll('.tab-button');
 </body>
 </html>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>
