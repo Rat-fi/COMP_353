@@ -165,7 +165,7 @@ $conn->close();
 
         <!-- Tab content for Groups -->
         <div class="tab-content" id="groups">
-            <button onclick="window.location.href='../create_group.php'" class="btn btn-primary">Add Group</button>
+            <button onclick="window.location.href='../groups/create_group.php'" class="btn btn-primary">Add Group</button>
             <input type="text" id="search-group" placeholder="Search Groups" class="form-control">
             <div id="groups-list">
                 <?php while ($group = $groups_result->fetch_assoc()): ?>
