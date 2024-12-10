@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -64,7 +64,7 @@ $stmt->bind_param("i", $event_id);
 $stmt->execute();
 $participants_result = $stmt->get_result();
 
-include('includes/header.php');
+include('../includes/header.php');
 ?>
 
 <main style="padding: 1rem; max-width: 900px; margin: auto;">
@@ -182,9 +182,10 @@ include('includes/header.php');
     </div>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>
 
 <?php
+
 // Handle organizer edits
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_status'])) {
     $new_status = $_POST['new_status'];
@@ -205,4 +206,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_status'])) {
         echo "<script>alert('You are not authorized to edit this event.');</script>";
     }
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['suggested_date']) && isset($_POST['suggested_location'])) {
+    $suggested_date = $_POST['suggested_date'];
+    $suggested_location = $_POST['suggested_location'];
+
+    // Check if the user has already voted for this event
+    $query = "SELECT * FROM EventVotes WHERE EventID = ? AND MemberID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("ii", $event_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo "<script>alert('You have already voted for this event.');</script>";
+    } else {
+        // Insert the user's vote
+        $query = "INSERT INTO EventVotes (EventID, MemberID, SuggestedDate, SuggestedLocation) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("iiss", $event_id, $user_id, $suggested_date, $suggested_location);
+
+        if ($stmt->execute()) {
+            echo "<script>alert('Your vote has been submitted successfully.'); window.location.href = 'event.php?event_id=$event_id';</script>";
+        } else {
+            echo "<script>alert('Error submitting your vote. Please try again.');</script>";
+        }
+    }
+}
 ?>
+

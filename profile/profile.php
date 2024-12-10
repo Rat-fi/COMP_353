@@ -1,6 +1,6 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Get the MemberID from the URL
 if (!isset($_GET['member_id']) || !is_numeric($_GET['member_id'])) {
@@ -21,13 +21,13 @@ if ($result->num_rows > 0) {
     exit();
 }
 
-include('includes/header.php');
+include('../includes/header.php');
 ?>
 
 <main>
     <section class="profile">
         <div class="back-button-container" style="margin-bottom: 1rem;">
-            <a href="dashboard.php" class="link-button" style="padding: 0.5rem 1rem; text-decoration: none; background-color: #212e54; color: white; border-radius: 5px;">
+            <a href="../dashboard.php" class="link-button" style="padding: 0.5rem 1rem; text-decoration: none; background-color: #212e54; color: white; border-radius: 5px;">
                 &larr; Back to Dashboard
             </a>
         </div>
@@ -85,4 +85,4 @@ include('includes/header.php');
     </section>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

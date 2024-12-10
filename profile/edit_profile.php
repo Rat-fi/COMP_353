@@ -3,11 +3,11 @@ session_start();
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
-include('config.php');
+include('../config.php');
 
 // Fetch current user information
 $user_id = $_SESSION['user_id'];
@@ -52,13 +52,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
     }
 }
 
-include('includes/header.php');
+include('../includes/header.php');
 ?>
 
 <main>
     <section class="edit-profile">
         <div class="back-button-container">
-            <a href="dashboard.php" class="link-button"><arrow></arrow> Back</a>
+            <a href="../dashboard.php" class="link-button"><arrow></arrow> Back</a>
         </div>
         <h1>Edit Your Profile</h1>
 
@@ -133,4 +133,4 @@ include('includes/header.php');
     </section>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

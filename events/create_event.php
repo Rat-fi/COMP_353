@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -38,7 +38,7 @@ if ($membership_result->num_rows === 0) {
 
 $membership = $membership_result->fetch_assoc();
 
-include('includes/header.php');
+include('../includes/header.php');
 
 // Handle event creation
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -55,7 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("iissss", $group_id, $user_id, $event_name, $description, $event_date, $location);
 
         if ($stmt->execute()) {
-            echo "<script>alert('Event created successfully.'); window.location.href = 'group.php?group_id=$group_id';</script>";
+            echo "<script>alert('Event created successfully.'); window.location.href = '../groups/group.php?group_id=$group_id';</script>";
             exit();
         } else {
             echo "<script>alert('Error creating event. Please try again.');</script>";
@@ -87,4 +87,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </section>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>

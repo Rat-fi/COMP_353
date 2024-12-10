@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -109,6 +109,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->execute();
         }
     }
+
+    if (isset($_POST['action']) && $_POST['action'] === 'leave_group') {
+        // Ensure the user is a member of the group before allowing them to leave
+        $query = "DELETE FROM GroupMembers WHERE MemberID = ? AND GroupID = ?";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ii", $user_id, $group_id);
+        $stmt->execute();
+
+        if ($stmt->affected_rows > 0) {
+            echo "You have successfully left the group.";
+        } else {
+            echo "Failed to leave the group. Please try again.";
+        }
+        exit();
+    }
 }
 
 // Fetch latest posts in the group
@@ -157,7 +172,7 @@ $stmt->bind_param("i", $group_id);
 $stmt->execute();
 $members_result = $stmt->get_result();
 
-include('includes/header.php');
+include('../includes/header.php');
 ?>
 
 <main style="padding: 1rem; max-width: 1200px; margin: auto;">
@@ -175,13 +190,13 @@ include('includes/header.php');
                 <h2>Latest Posts</h2>
                 <div>
                     <button style="padding: 0.5rem; font-size: 0.9rem; cursor: pointer;"
-                        onclick="window.location.href='create_post.php?group_id=<?php echo $group_id; ?>'">Create Post</button>
+                        onclick="window.location.href='../posts/create_post.php?group_id=<?php echo $group_id; ?>'">Create Post</button>
                 </div>
             </div>
             <div style="height: 700px; overflow-y: auto;">
                 <?php if ($posts_result->num_rows > 0): ?>
                     <?php while ($post = $posts_result->fetch_assoc()): ?>
-                        <a href="post.php?post_id=<?php echo htmlspecialchars($post['PostID']); ?>"
+                        <a href="../posts/post.php?post_id=<?php echo htmlspecialchars($post['PostID']); ?>"
                             style="text-decoration: none; color: inherit; display: block; margin-bottom: 1rem;">
                             <div style="background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; padding: 1rem;">
                                 <p><strong><?php echo htmlspecialchars($post['FirstName'] . ' ' . $post['LastName']); ?></strong></p>
@@ -211,7 +226,16 @@ include('includes/header.php');
         <!-- Members and Events List -->
         <section>
             <section style="background: #fff; border: 1px solid #ddd; border-radius: 5px; padding: 1rem;">
-                <h2>Members</h2>
+                <div style="display: flex; justify-content: space-between;">
+                    <h2>Members</h2>
+                    <div>
+                        <?php if (!$is_owner): ?>
+                            <button onclick="leaveGroup()" style="padding: 0.5rem; color: white; background: red; border: none; border-radius: 5px; cursor: pointer;">
+                                Leave Group
+                            </button>
+                        <?php endif; ?>
+                    </div>
+                </div>
                 <?php if ($members_result->num_rows > 0): ?>
                     <ul style="height: 300px; overflow-y: auto; list-style-type: none; padding: 0;">
                         <?php while ($member = $members_result->fetch_assoc()): ?>
@@ -246,7 +270,7 @@ include('includes/header.php');
                 <div style="display: flex; justify-content: space-between;">
                     <h2>Upcoming Events</h2>
                     <div>
-                        <button class="link-button" onclick="window.location.href='create_event.php?group_id=<?php echo $group_id; ?>'">
+                        <button class="link-button" onclick="window.location.href='../events/create_event.php?group_id=<?php echo $group_id; ?>'">
                             Create Event
                         </button>
                     </div>
@@ -279,7 +303,7 @@ include('includes/header.php');
                 if ($events_result->num_rows > 0): ?>
                     <ul style="height: 200px; overflow-y: auto; list-style-type: none; padding: 0; ">
                         <?php while ($event = $events_result->fetch_assoc()): ?>
-                            <a href="event.php?event_id=<?php echo htmlspecialchars($event['EventID']); ?>" style="text-decoration: none; color: inherit;">
+                            <a href="../events/event.php?event_id=<?php echo htmlspecialchars($event['EventID']); ?>" style="text-decoration: none; color: inherit;">
                                 <li style="margin-bottom: 1rem; padding: 0.5rem; border-bottom: 1px solid #ddd; cursor: pointer;">
                                     <strong><?php echo htmlspecialchars($event['EventName']); ?></strong>
                                     <p style="margin: 0.5rem 0;"><?php echo htmlspecialchars($event['Description']); ?></p>
@@ -316,4 +340,25 @@ include('includes/header.php');
     }
 </script>
 
-<?php include('includes/footer.php'); ?>
+<script>
+    function leaveGroup() {
+        if (confirm("Are you sure you want to leave this group?")) {
+            const formData = new FormData();
+            formData.append('action', 'leave_group');
+
+            fetch(window.location.href, {
+                method: 'POST',
+                body: formData
+            }).then(response => response.text())
+              .then(responseText => {
+                  alert("You have left the group.");
+                  window.location.href = 'groups.php'; // Redirect to groups page or a confirmation page
+              }).catch(error => {
+                  console.error('Error:', error);
+                  alert("An error occurred. Please try again.");
+              });
+        }
+    }
+</script>
+
+<?php include('../includes/footer.php'); ?>

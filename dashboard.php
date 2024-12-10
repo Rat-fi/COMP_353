@@ -51,7 +51,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
                 <?php echo htmlspecialchars($_SESSION['LastName'] ?? ''); ?>!
             </h1>
             <div style="justify-self: flex-end;">
-                <a href="edit_profile.php" class="link-button">Edit Profile</a>
+                <a href="profile/edit_profile.php" class="link-button">Edit Profile</a>
                 <p>Your privilege level: <strong><?php echo htmlspecialchars($_SESSION['privilege']); ?></strong></p>
             </div>
         </div>
@@ -139,7 +139,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
                     if ($result->num_rows > 0) {
                         while ($post = $result->fetch_assoc()) {
-                            echo "<a href='post.php?post_id=" . htmlspecialchars($post['PostID']) . "' style='text-decoration: none; color: inherit; width: 100%;'>
+                            echo "<a href='posts/post.php?post_id=" . htmlspecialchars($post['PostID']) . "' style='text-decoration: none; color: inherit; width: 100%;'>
                                 <div style='background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem; width: 99%;'>
                                     <p><strong>" . htmlspecialchars($post['FirstName']) . " " . htmlspecialchars($post['LastName']) . "</strong> 
                                     <span style='font-size: 0.75rem; color: #777;'>(" . htmlspecialchars($post['Visibility']) .
@@ -169,7 +169,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
             <section style="padding: 0.5rem; background: #f4f4f4; border: 1px solid #ddd; border-radius: 5px; text-align: center;">
                 <div style="display: flex; position: relative; justify-content: center;  align-items: center;">
                     <p>My Groups</p>
-                    <a href="groups.php" style="position: absolute; right: 0; align-content: center;" class="link-button">manage</a>
+                    <a href="groups/groups.php" style="position: absolute; right: 0; align-content: center;" class="link-button">manage</a>
                 </div>
                 <div style="height: 200px; overflow-y: auto; display: flex; flex-direction: column; align-items: flex-start; padding: 0.5rem; background: #fff; border: 1px solid #ddd; border-radius: 5px;">
                     <?php
@@ -192,7 +192,7 @@ $_SESSION['LAST_ACTIVITY'] = time();
 
                     if ($result->num_rows > 0) {
                         while ($group = $result->fetch_assoc()) {
-                            echo "<a href='group.php?group_id=" . htmlspecialchars($group['GroupID']) . "' style='text-decoration: none; color: inherit; width: 100%;'>
+                            echo "<a href='groups/group.php?group_id=" . htmlspecialchars($group['GroupID']) . "' style='text-decoration: none; color: inherit; width: 100%;'>
                                 <div style='padding: 0.3rem; background: #f9f9f9; border: 1px solid #ddd; border-radius: 3px; font-size: 0.85rem; margin-bottom: 0.3rem;'>
                                     <p><strong>" . htmlspecialchars($group['GroupName']) . "</strong> 
                                     <span style='font-size: 0.75rem; color: #777;'>(" . htmlspecialchars($group['Role']) . ")</span></p>

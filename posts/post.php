@@ -1,10 +1,10 @@
 <?php
 session_start();
-include('config.php');
+include('../config.php');
 
 // Redirect to login if not logged in
 if (!isset($_SESSION['user_id'])) {
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit();
 }
 
@@ -75,7 +75,7 @@ $stmt->bind_param("i", $post_id);
 $stmt->execute();
 $comments_result = $stmt->get_result();
 
-include('includes/header.php');
+include('../includes/header.php');
 ?>
 
 <main style="padding: 1rem; max-width: 800px; margin: auto;">
@@ -124,7 +124,7 @@ include('includes/header.php');
     </section>
 </main>
 
-<?php include('includes/footer.php'); ?>
+<?php include('../includes/footer.php'); ?>
 
 <?php
 // Handle comment submission
