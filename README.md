@@ -17,11 +17,48 @@ The URL for our project is:
 <br>
 https://jpc353.encs.concordia.ca
 
-The following files are included in our submission:
-<br>
-TO DO: add list of files included in the submission.
+# The following files are included in our submission:
 
-TO DO: Also include: the user IDs and passwords of all users for
-testing the system and any other information required to install, 
-run and test the system during the final grading by the course
-professor on his own server.
+./admin/admin_add_member.php<br>
+./admin/admin_delete_group.php<br>
+./admin/admin_delete_member.php<br>
+./admin/admin_edit_group.php<br>
+./admin/admin_edit_member.php<br>
+./admin/admin_moderate_post.php<br>
+./admin/admin.php<br>
+./assets/css/styles.css<br>
+./chat/chat_list.php<br>
+./chat/chat.php<br>
+./connections/add_connection.php<br>
+./connections/connections.php<br>
+./gifts/gift_send.php<br>
+./gifts/gifts_update_status.php<br>
+./gifts/gifts.php<br>
+./includes/footer.php<br>
+./includes/header.php<br>
+./config.php<br>
+./create_event.php<br>
+./create_group.php<br>
+./create_post.php<br>
+./dashboard.php<br>
+./edit_profile.php<br>
+./event.php<br>
+./group.php<br>
+./groups.php<br>
+./index.php<br>
+./login.php<br>
+./logout.php<br>
+./post.php<br>
+./profile.php<br>
+./README.md<br>
+./register.php<br>
+
+# To test the system using the data on the school's SQL server:
+An Administrator level account:<br>
+Username: Raph -- Password: Raph
+
+A Senior level account:<br>
+Username: senior-user -- Password: apassword
+
+A Junior level account:<br>
+Username: new-user -- Password: apassword
